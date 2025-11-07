@@ -28,9 +28,16 @@ from data_collector.data_updater import fetch_and_store, check_stock_data_exists
 logger = setup_logger("dashboard")
 
 def ensure_data_completeness(stock_id, start_date, end_date):
-    """TODO: Add docstring for def ensure_data_completeness(stock_id, start_date, end_date):"""
     """
     檢查資料是否完整，若缺少日期範圍內的最新資料則自動抓取補齊。
+    
+    參數：
+        stock_id (str): : 股票代碼
+        start_date (str): 查詢起始日期
+        end_date (str): 查詢結束日期
+    
+    返回：
+        df (pd.Dataframe): 股價資料
     """
     # Step 1: 自動補抓缺資料
     exists = check_stock_data_exists(stock_id, start_date, end_date)
@@ -61,7 +68,15 @@ def ensure_data_completeness(stock_id, start_date, end_date):
     return df
 
 def run_dashboard():
-    """TODO: Add docstring for def run_dashboard():"""
+    """
+    顯示頁面內容，可選擇分析模式：個股分析、多股票摘要表
+    
+    參數：
+        NA
+    
+    返回：
+        NA
+    """
 
     st.set_page_config(page_title="股市分析平台", layout="wide")
     st.title("📈 動態股市分析平台")
@@ -153,14 +168,23 @@ def run_dashboard():
     st.sidebar.markdown("**版本**：Beta 1.0")
             
 def generate_charts(df: pd.DataFrame, stock_name = str):
-    """TODO: Add docstring for def generate_charts(df: pd.DataFrame, stock_name = str):"""
+    """
+    檢查資料是否完整，若缺少日期範圍內的最新資料則自動抓取補齊。
+    
+    參數：
+        df (pd.Dataframe): 股價資料
+        stock_name (str): 股票名稱
+    
+    返回：
+        NA
+    """
 
     # -------------------------
     # 自動趨勢分析解讀
     # -------------------------
     trend_messages = analyze_trend(df)
     if trend_messages:
-        st.markdown("### 🔔 趨勢分析解讀")
+        st.markdown(f"### 🔔 {stock_name} 趨勢分析解讀")
         for msg in trend_messages:
             st.info(msg)
 
