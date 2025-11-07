@@ -13,7 +13,7 @@ pip install -r requirements.txt
 ```
 ***
 ### 專案架構
-##### 參考 *([自動生成技術文件檔](https://htmlpreview.github.io/?https://github.com/dr-apchen/apchen-twseAnalytics/blob/main/docs/index.html))*
+##### 參考 *([自動生成技術文件檔](https://htmlpreview.github.io/?https://github.com/dr-apchen/apchen-twseAnalytics/blob/main/docs/index.html){:target="_blank"})*
 ```
 twseAnalytics/
 │
