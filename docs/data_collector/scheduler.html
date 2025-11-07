@@ -88,21 +88,39 @@ data_collector<wbr>.scheduler    </h1>
 </span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="n">logger</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="s2">&quot;scheduler&quot;</span><span class="p">)</span>
 </span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>
 </span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="k">def</span><span class="w"> </span><span class="nf">job</span><span class="p">():</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;TODO: Add docstring for def job():&quot;&quot;&quot;</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;⏰ 開始自動抓取每日股價資料...&quot;</span><span class="p">)</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>    <span class="n">fetch_and_store</span><span class="p">()</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✅ 每日股價資料更新完成&quot;</span><span class="p">)</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="k">def</span><span class="w"> </span><span class="nf">run_scheduler</span><span class="p">():</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;TODO: Add docstring for def run_scheduler():&quot;&quot;&quot;</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>    <span class="c1"># schedule.every().day.at(&quot;04:30&quot;).do(fetch_twse_stock_list)</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>    <span class="c1"># 設定每天上午 9:30 自動執行（台股開盤前）</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>    <span class="n">schedule</span><span class="o">.</span><span class="n">every</span><span class="p">()</span><span class="o">.</span><span class="n">day</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="s2">&quot;09:30&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">do</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;🕘 排程啟動，等待每日自動抓取...&quot;</span><span class="p">)</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>        <span class="n">schedule</span><span class="o">.</span><span class="n">run_pending</span><span class="p">()</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span>  <span class="c1"># 每分鐘檢查一次</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="sd">    執行更新作業</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="sd">    </span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="sd">    參數：</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="sd">        NA</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="sd">    </span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="sd">    返回：</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="sd">        NA</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>    
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;⏰ 開始自動抓取每日股價資料...&quot;</span><span class="p">)</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>    <span class="n">fetch_and_store</span><span class="p">()</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✅ 每日股價資料更新完成&quot;</span><span class="p">)</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="k">def</span><span class="w"> </span><span class="nf">run_scheduler</span><span class="p">():</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="sd">    批次執行更新作業設定</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="sd">    </span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="sd">    參數：</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a><span class="sd">        NA</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="sd">    </span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a><span class="sd">    返回：</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a><span class="sd">        NA</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>    
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>    <span class="c1"># schedule.every().day.at(&quot;04:30&quot;).do(fetch_twse_stock_list)</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>    <span class="c1"># 設定每天上午 9:30 自動執行（台股開盤前）</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>    <span class="n">schedule</span><span class="o">.</span><span class="n">every</span><span class="p">()</span><span class="o">.</span><span class="n">day</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="s2">&quot;09:30&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">do</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;🕘 排程啟動，等待每日自動抓取...&quot;</span><span class="p">)</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>        <span class="n">schedule</span><span class="o">.</span><span class="n">run_pending</span><span class="p">()</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span>  <span class="c1"># 每分鐘檢查一次</span>
 </span></pre></div>
 
 
@@ -131,14 +149,29 @@ data_collector<wbr>.scheduler    </h1>
     </div>
     <a class="headerlink" href="#job"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="job-17"><a href="#job-17"><span class="linenos">17</span></a><span class="k">def</span><span class="w"> </span><span class="nf">job</span><span class="p">():</span>
-</span><span id="job-18"><a href="#job-18"><span class="linenos">18</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;TODO: Add docstring for def job():&quot;&quot;&quot;</span>
-</span><span id="job-19"><a href="#job-19"><span class="linenos">19</span></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;⏰ 開始自動抓取每日股價資料...&quot;</span><span class="p">)</span>
-</span><span id="job-20"><a href="#job-20"><span class="linenos">20</span></a>    <span class="n">fetch_and_store</span><span class="p">()</span>
-</span><span id="job-21"><a href="#job-21"><span class="linenos">21</span></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✅ 每日股價資料更新完成&quot;</span><span class="p">)</span>
+</span><span id="job-18"><a href="#job-18"><span class="linenos">18</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="job-19"><a href="#job-19"><span class="linenos">19</span></a><span class="sd">    執行更新作業</span>
+</span><span id="job-20"><a href="#job-20"><span class="linenos">20</span></a><span class="sd">    </span>
+</span><span id="job-21"><a href="#job-21"><span class="linenos">21</span></a><span class="sd">    參數：</span>
+</span><span id="job-22"><a href="#job-22"><span class="linenos">22</span></a><span class="sd">        NA</span>
+</span><span id="job-23"><a href="#job-23"><span class="linenos">23</span></a><span class="sd">    </span>
+</span><span id="job-24"><a href="#job-24"><span class="linenos">24</span></a><span class="sd">    返回：</span>
+</span><span id="job-25"><a href="#job-25"><span class="linenos">25</span></a><span class="sd">        NA</span>
+</span><span id="job-26"><a href="#job-26"><span class="linenos">26</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="job-27"><a href="#job-27"><span class="linenos">27</span></a>    
+</span><span id="job-28"><a href="#job-28"><span class="linenos">28</span></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;⏰ 開始自動抓取每日股價資料...&quot;</span><span class="p">)</span>
+</span><span id="job-29"><a href="#job-29"><span class="linenos">29</span></a>    <span class="n">fetch_and_store</span><span class="p">()</span>
+</span><span id="job-30"><a href="#job-30"><span class="linenos">30</span></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✅ 每日股價資料更新完成&quot;</span><span class="p">)</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>TODO: Add docstring for def job():</p>
+            <div class="docstring"><p>執行更新作業</p>
+
+<p>參數：
+    NA</p>
+
+<p>返回：
+    NA</p>
 </div>
 
 
@@ -154,20 +187,35 @@ data_collector<wbr>.scheduler    </h1>
 
     </div>
     <a class="headerlink" href="#run_scheduler"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="run_scheduler-23"><a href="#run_scheduler-23"><span class="linenos">23</span></a><span class="k">def</span><span class="w"> </span><span class="nf">run_scheduler</span><span class="p">():</span>
-</span><span id="run_scheduler-24"><a href="#run_scheduler-24"><span class="linenos">24</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;TODO: Add docstring for def run_scheduler():&quot;&quot;&quot;</span>
-</span><span id="run_scheduler-25"><a href="#run_scheduler-25"><span class="linenos">25</span></a>    <span class="c1"># schedule.every().day.at(&quot;04:30&quot;).do(fetch_twse_stock_list)</span>
-</span><span id="run_scheduler-26"><a href="#run_scheduler-26"><span class="linenos">26</span></a>    <span class="c1"># 設定每天上午 9:30 自動執行（台股開盤前）</span>
-</span><span id="run_scheduler-27"><a href="#run_scheduler-27"><span class="linenos">27</span></a>    <span class="n">schedule</span><span class="o">.</span><span class="n">every</span><span class="p">()</span><span class="o">.</span><span class="n">day</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="s2">&quot;09:30&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">do</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
-</span><span id="run_scheduler-28"><a href="#run_scheduler-28"><span class="linenos">28</span></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;🕘 排程啟動，等待每日自動抓取...&quot;</span><span class="p">)</span>
-</span><span id="run_scheduler-29"><a href="#run_scheduler-29"><span class="linenos">29</span></a>
-</span><span id="run_scheduler-30"><a href="#run_scheduler-30"><span class="linenos">30</span></a>    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-</span><span id="run_scheduler-31"><a href="#run_scheduler-31"><span class="linenos">31</span></a>        <span class="n">schedule</span><span class="o">.</span><span class="n">run_pending</span><span class="p">()</span>
-</span><span id="run_scheduler-32"><a href="#run_scheduler-32"><span class="linenos">32</span></a>        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span>  <span class="c1"># 每分鐘檢查一次</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="run_scheduler-32"><a href="#run_scheduler-32"><span class="linenos">32</span></a><span class="k">def</span><span class="w"> </span><span class="nf">run_scheduler</span><span class="p">():</span>
+</span><span id="run_scheduler-33"><a href="#run_scheduler-33"><span class="linenos">33</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="run_scheduler-34"><a href="#run_scheduler-34"><span class="linenos">34</span></a><span class="sd">    批次執行更新作業設定</span>
+</span><span id="run_scheduler-35"><a href="#run_scheduler-35"><span class="linenos">35</span></a><span class="sd">    </span>
+</span><span id="run_scheduler-36"><a href="#run_scheduler-36"><span class="linenos">36</span></a><span class="sd">    參數：</span>
+</span><span id="run_scheduler-37"><a href="#run_scheduler-37"><span class="linenos">37</span></a><span class="sd">        NA</span>
+</span><span id="run_scheduler-38"><a href="#run_scheduler-38"><span class="linenos">38</span></a><span class="sd">    </span>
+</span><span id="run_scheduler-39"><a href="#run_scheduler-39"><span class="linenos">39</span></a><span class="sd">    返回：</span>
+</span><span id="run_scheduler-40"><a href="#run_scheduler-40"><span class="linenos">40</span></a><span class="sd">        NA</span>
+</span><span id="run_scheduler-41"><a href="#run_scheduler-41"><span class="linenos">41</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="run_scheduler-42"><a href="#run_scheduler-42"><span class="linenos">42</span></a>    
+</span><span id="run_scheduler-43"><a href="#run_scheduler-43"><span class="linenos">43</span></a>    <span class="c1"># schedule.every().day.at(&quot;04:30&quot;).do(fetch_twse_stock_list)</span>
+</span><span id="run_scheduler-44"><a href="#run_scheduler-44"><span class="linenos">44</span></a>    <span class="c1"># 設定每天上午 9:30 自動執行（台股開盤前）</span>
+</span><span id="run_scheduler-45"><a href="#run_scheduler-45"><span class="linenos">45</span></a>    <span class="n">schedule</span><span class="o">.</span><span class="n">every</span><span class="p">()</span><span class="o">.</span><span class="n">day</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="s2">&quot;09:30&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">do</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
+</span><span id="run_scheduler-46"><a href="#run_scheduler-46"><span class="linenos">46</span></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;🕘 排程啟動，等待每日自動抓取...&quot;</span><span class="p">)</span>
+</span><span id="run_scheduler-47"><a href="#run_scheduler-47"><span class="linenos">47</span></a>
+</span><span id="run_scheduler-48"><a href="#run_scheduler-48"><span class="linenos">48</span></a>    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+</span><span id="run_scheduler-49"><a href="#run_scheduler-49"><span class="linenos">49</span></a>        <span class="n">schedule</span><span class="o">.</span><span class="n">run_pending</span><span class="p">()</span>
+</span><span id="run_scheduler-50"><a href="#run_scheduler-50"><span class="linenos">50</span></a>        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span>  <span class="c1"># 每分鐘檢查一次</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>TODO: Add docstring for def run_scheduler():</p>
+            <div class="docstring"><p>批次執行更新作業設定</p>
+
+<p>參數：
+    NA</p>
+
+<p>返回：
+    NA</p>
 </div>
 
 
