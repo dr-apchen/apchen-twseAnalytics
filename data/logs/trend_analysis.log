@@ -1,0 +1,7 @@
+2025-11-07 10:33:02,193 [INFO] package: mysql.connector.plugins
+2025-11-07 10:33:02,194 [INFO] plugin_name: caching_sha2_password
+2025-11-07 10:33:02,194 [INFO] AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2025-11-07 10:33:02,194 [INFO] package: mysql.connector.plugins
+2025-11-07 10:33:02,194 [INFO] plugin_name: mysql_native_password
+2025-11-07 10:33:02,197 [INFO] AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-11-07 10:33:25,929 [ERROR] $2330.TW: possibly delisted; no price data found  (1d 2025-11-06 -> 2025-11-06)

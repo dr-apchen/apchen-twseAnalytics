@@ -1,0 +1,53 @@
+[2025-11-07 10:28:55] 📂 已切換至專案根目錄：D:\Project\twseAnalytics
+[2025-11-07 10:28:55] 🧩 已啟用 safe_imports 模式（忽略 import 錯誤）
+[2025-11-07 10:28:55] 🧠 發現 21 個模組待生成：
+[2025-11-07 10:28:55]    - main
+[2025-11-07 10:28:55]    - setup_env
+[2025-11-07 10:28:55]    - analytics.indicators
+[2025-11-07 10:28:55]    - analytics.portfolio_stats
+[2025-11-07 10:28:55]    - analytics.trend_analysis
+[2025-11-07 10:28:55]    - database.data_loader
+[2025-11-07 10:28:55]    - database.db_config
+[2025-11-07 10:28:55]    - database.db_connection
+[2025-11-07 10:28:55]    - database.stock_info_manager
+[2025-11-07 10:28:55]    - data_collector.data_updater
+[2025-11-07 10:28:55]    - data_collector.scheduler
+[2025-11-07 10:28:55]    - data_collector.twse_crawler
+[2025-11-07 10:28:55]    - data_collector.twstock_api
+[2025-11-07 10:28:55]    - data_collector.yahoo_api
+[2025-11-07 10:28:55]    - tests.test_data_loader
+[2025-11-07 10:28:55]    - utils.docstring_helper
+[2025-11-07 10:28:55]    - utils.helpers
+[2025-11-07 10:28:55]    - utils.stock_info_map
+[2025-11-07 10:28:55]    - visualization.chart_utils
+[2025-11-07 10:28:55]    - visualization.dashboard
+[2025-11-07 10:28:55]    - visualization.summary_table
+[2025-11-07 10:28:55] 🚀 執行命令: C:\ProgramData\anaconda3\python.exe -m pdoc --output-dir docs main setup_env analytics.indicators analytics.portfolio_stats analytics.trend_analysis database.data_loader database.db_config database.db_connection database.stock_info_manager data_collector.data_updater data_collector.scheduler data_collector.twse_crawler data_collector.twstock_api data_collector.yahoo_api tests.test_data_loader utils.docstring_helper utils.helpers utils.stock_info_map visualization.chart_utils visualization.dashboard visualization.summary_table
+[2025-11-07 10:29:06] ✅ 文件已生成：D:\Project\twseAnalytics\docs
+[2025-11-07 10:31:01] 📂 已切換至專案根目錄：D:\Project\twseAnalytics
+[2025-11-07 10:31:01] 🧩 已啟用 safe_imports 模式（忽略 import 錯誤）
+[2025-11-07 10:31:01] 🧠 發現 21 個模組待生成：
+[2025-11-07 10:31:01]    - main
+[2025-11-07 10:31:01]    - setup_env
+[2025-11-07 10:31:01]    - analytics.indicators
+[2025-11-07 10:31:01]    - analytics.portfolio_stats
+[2025-11-07 10:31:01]    - analytics.trend_analysis
+[2025-11-07 10:31:01]    - database.data_loader
+[2025-11-07 10:31:01]    - database.db_config
+[2025-11-07 10:31:01]    - database.db_connection
+[2025-11-07 10:31:01]    - database.stock_info_manager
+[2025-11-07 10:31:01]    - data_collector.data_updater
+[2025-11-07 10:31:01]    - data_collector.scheduler
+[2025-11-07 10:31:01]    - data_collector.twse_crawler
+[2025-11-07 10:31:01]    - data_collector.twstock_api
+[2025-11-07 10:31:01]    - data_collector.yahoo_api
+[2025-11-07 10:31:01]    - tests.test_data_loader
+[2025-11-07 10:31:01]    - utils.docstring_helper
+[2025-11-07 10:31:01]    - utils.helpers
+[2025-11-07 10:31:01]    - utils.stock_info_map
+[2025-11-07 10:31:01]    - visualization.chart_utils
+[2025-11-07 10:31:01]    - visualization.dashboard
+[2025-11-07 10:31:01]    - visualization.summary_table
+[2025-11-07 10:31:01] 🚀 執行命令: C:\ProgramData\anaconda3\python.exe -m pdoc --output-dir docs main setup_env analytics.indicators analytics.portfolio_stats analytics.trend_analysis database.data_loader database.db_config database.db_connection database.stock_info_manager data_collector.data_updater data_collector.scheduler data_collector.twse_crawler data_collector.twstock_api data_collector.yahoo_api tests.test_data_loader utils.docstring_helper utils.helpers utils.stock_info_map visualization.chart_utils visualization.dashboard visualization.summary_table
+[2025-11-07 10:31:10] ✅ 文件已生成：D:\Project\twseAnalytics\docs
+[2025-11-07 10:31:10] 🌐 已自動開啟瀏覽器：D:\Project\twseAnalytics\docs\index.html

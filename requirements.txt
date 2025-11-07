@@ -1,0 +1,7 @@
+yfinance
+pandas
+mysql-connector-python
+schedule
+streamlit
+plotly
+pdoc

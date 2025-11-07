@@ -1,0 +1,18 @@
+2025-11-06 15:05:16,884 [INFO] package: mysql.connector.plugins
+2025-11-06 15:05:16,887 [INFO] plugin_name: caching_sha2_password
+2025-11-06 15:05:16,887 [INFO] AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2025-11-06 15:05:16,888 [INFO] package: mysql.connector.plugins
+2025-11-06 15:05:16,888 [INFO] plugin_name: mysql_native_password
+2025-11-06 15:05:16,889 [INFO] AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-11-06 15:05:18,650 [ERROR] $3322.TWO: possibly delisted; no price data found  (1d 2025-11-05 -> 2025-11-05)
+2025-11-06 15:11:56,067 [INFO] package: mysql.connector.plugins
+2025-11-06 15:11:56,070 [INFO] plugin_name: caching_sha2_password
+2025-11-06 15:11:56,070 [INFO] AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2025-11-06 15:11:56,071 [INFO] package: mysql.connector.plugins
+2025-11-06 15:11:56,071 [INFO] plugin_name: mysql_native_password
+2025-11-06 15:11:56,072 [INFO] AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-11-06 15:11:57,735 [ERROR] $3322.TWO: possibly delisted; no price data found  (1d 2025-11-05 -> 2025-11-05)
+2025-11-06 15:12:00,854 [ERROR] $2330.TW: possibly delisted; no price data found  (1d 2025-11-05 -> 2025-11-05)
+2025-11-06 15:13:56,269 [ERROR] $2330.TW: possibly delisted; no price data found  (1d 2025-11-05 -> 2025-11-05)
+2025-11-06 15:13:58,598 [ERROR] $3322.TWO: possibly delisted; no price data found  (1d 2025-11-05 -> 2025-11-05)
+2025-11-06 16:00:22,607 [ERROR] $3322.TWO: possibly delisted; no price data found  (1d 2025-11-05 -> 2025-11-05)
