@@ -15,8 +15,15 @@ logger = setup_logger("twse_crawler")
 TWSE_URL = {"TW": "https://isin.twse.com.tw/isin/C_public.jsp?strMode=2", "TWO": "https://isin.twse.com.tw/isin/C_public.jsp?strMode=4"}
 
 def fetch_twse_stock_list(save_path="data/tw_stock_list.csv"):
-    """TODO: Add docstring for def fetch_twse_stock_list(save_path="data/tw_stock_list.csv"):"""
-    """爬取台股上市/上櫃股票代碼與中文名稱，並更新 CSV"""
+    """
+    爬取台股上市/上櫃股票代碼與中文名稱，並更新 CSV
+    
+    參數：
+        save_path (str): 檔案路徑
+    
+    返回：
+        NA
+    """
     
     stock_list = []
     for key in TWSE_URL:
@@ -38,7 +45,16 @@ def fetch_twse_stock_list(save_path="data/tw_stock_list.csv"):
     print(f"✅ 已更新台股中文名稱對照表，共 {len(df)} 檔股票")
 
 def twse_request(url: str):
-    """TODO: Add docstring for def twse_request(url: str):"""
+    """
+    發出TWSE頁面請求
+    
+    參數：
+        url (str): 檔案路徑
+    
+    返回：
+        NA
+    """
+    
     try:
         # 使用 certifi 提供的憑證進行 SSL 驗證
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)

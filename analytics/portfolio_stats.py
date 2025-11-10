@@ -12,9 +12,14 @@ from analytics.trend_analysis import analyze_trend
 logger = setup_logger("portfolio_stats")
 
 def generate_summary_table(stock_data_dict):
-    """TODO: Add docstring for def generate_summary_table(stock_data_dict):"""
     """
-    stock_data_dict: { stock_id: (stock_name, df) }
+    多股票技術指標摘要表
+    
+    參數：
+        stock_data_dict (dict): 股價資訊
+    
+    返回：
+        df_summary (pd.Dataframe): 股價摘要
     """
 
     summary_rows = []
@@ -99,9 +104,14 @@ def generate_summary_table(stock_data_dict):
 
 
 def export_summary_to_excel(df_summary):
-    """TODO: Add docstring for def export_summary_to_excel(df_summary):"""
     """
-    匯出摘要表成 Excel 檔案
+    多股票技術指標摘要表匯出摘要表成 Excel 檔案
+    
+    參數：
+        df_summary (pd.Dataframe): 股價摘要
+    
+    返回：
+        output.getvalue()
     """
     output = BytesIO()
     with pd.ExcelWriter(output, engine="openpyxl") as writer:

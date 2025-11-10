@@ -15,10 +15,18 @@ logger = setup_logger("chart_utils")
 # 收盤價 + 移動平均線
 # -------------------------
 def plot_price_ma(df: pd.DataFrame, stock_name: str, ma_columns=None):
-    """TODO: Add docstring for def plot_price_ma(df: pd.DataFrame, stock_name: str, ma_columns=None):"""
     """
+    收盤價 + 移動平均線
     df 必須包含: trade_date, close_price
     ma_columns: list of str, e.g. ["MA_5", "MA_20"]
+    
+    參數：
+        df (pd.Dataframe): 股價資料
+        stock_name (str): 股票名稱
+        ma_columns (list): 均線基準
+    
+    返回型別：
+        fig (go.Figure()): 圖表物件
     """
     fig = go.Figure()
     fig.add_trace(go.Scatter(
@@ -47,7 +55,16 @@ def plot_price_ma(df: pd.DataFrame, stock_name: str, ma_columns=None):
 # RSI 指標圖
 # -------------------------
 def plot_rsi(df: pd.DataFrame, stock_name: str):
-    """TODO: Add docstring for def plot_rsi(df: pd.DataFrame, stock_name: str):"""
+    """
+    RSI 指標圖(相對強弱指標)
+    
+    參數：
+        df (pd.Dataframe): 股價資料
+        stock_name (str): 股票名稱
+    
+    返回型別：
+        fig (go.Figure()): 圖表物件
+    """
     if "RSI" not in df.columns:
         return None
 
@@ -67,7 +84,16 @@ def plot_rsi(df: pd.DataFrame, stock_name: str):
 # MACD 指標圖
 # -------------------------
 def plot_macd(df: pd.DataFrame, stock_name: str):
-    """TODO: Add docstring for def plot_macd(df: pd.DataFrame, stock_name: str):"""
+    """
+    MACD (指數平滑異同移動平均線)
+    
+    參數：
+        df (pd.Dataframe): 股價資料
+        stock_name (str): 股票名稱
+    
+    返回型別：
+        fig (go.Figure()): 圖表物件
+    """
     if "MACD" not in df.columns or "Signal" not in df.columns:
         return None
 
@@ -91,7 +117,16 @@ def plot_macd(df: pd.DataFrame, stock_name: str):
 # Bollinger Bands
 # -------------------------
 def plot_bollinger_bands(df: pd.DataFrame, stock_name: str):
-    """TODO: Add docstring for def plot_bollinger_bands(df: pd.DataFrame, stock_name: str):"""
+    """
+    Bollinger Bands (布林通道)
+    
+    參數：
+        df (pd.Dataframe): 股價資料
+        stock_name (str): 股票名稱
+    
+    返回型別：
+        fig (go.Figure()): 圖表物件
+    """
     if not all(col in df.columns for col in ["BB_upper", "BB_middle", "BB_lower"]):
         return None
 
@@ -112,10 +147,16 @@ def plot_bollinger_bands(df: pd.DataFrame, stock_name: str):
 # 成交量 + 成交量均線
 # -------------------------
 def plot_volume(df: pd.DataFrame, stock_name: str, ma_volume: str = None):
-    """TODO: Add docstring for def plot_volume(df: pd.DataFrame, stock_name: str):"""
     """
-    df 必須包含: trade_date, volume
-    ma_volume: 成交量均線欄位名稱
+    成交量 + 成交量均線
+    
+    參數：
+        df (pd.Dataframe): 股價資料
+        stock_name (str): 股票名稱
+        ma_columns (list): 均線基準
+    
+    返回型別：
+        fig (go.Figure()): 圖表物件
     """
     fig = go.Figure()
     fig.add_trace(go.Bar(

@@ -13,7 +13,6 @@ import pandas as pd
 logger = setup_logger("trend_analysis")
 
 def analyze_trend(df: pd.DataFrame):
-    """TODO: Add docstring for def analyze_trend(df: pd.DataFrame):"""
     """
     自動趨勢分析解讀：
     - 收盤價 vs MA
@@ -21,6 +20,12 @@ def analyze_trend(df: pd.DataFrame):
     - MACD 多空訊號
     - 成交量放大/縮小
     返回中文文字描述
+    
+    參數：
+        df (pd.Dataframe): 股價資料
+    
+    返回：
+        messages (str): 趨勢分析訊息
     """
     messages = []
 

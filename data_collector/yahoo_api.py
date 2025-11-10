@@ -10,11 +10,19 @@ import yfinance as yf
 logger = setup_logger("yahoo_api")
 
 def fetch_stock_data(stock_code: str, start_date: str, end_date: str):
-    """TODO: Add docstring for def fetch_stock_data(stock_code: str, start_date: str, end_date: str):"""
     """
     抓取股票歷史資料，回傳 list[dict]
     每筆 dict 包含：stock_id, trade_date, open_price, high_price, low_price, close_price, volume
+    
+    參數：
+        stock_code (str): yahoo股票代碼
+        start_date (str): 查詢起始日期
+        end_date (str): 查詢結束日期
+    
+    返回：
+        data_list (list[dict]): 股價資料
     """
+    
     ticker = yf.Ticker(stock_code)
     hist = ticker.history(start=start_date, end=end_date)
 
@@ -35,8 +43,16 @@ def fetch_stock_data(stock_code: str, start_date: str, end_date: str):
     return data_list
 
 def fetch_stock_name(stock_code: str) -> str:
-    """TODO: Add docstring for def fetch_stock_name(stock_code: str) -> str:"""
-    """取得股票名稱 (英文或長名稱)"""
+    """
+    取得股票名稱 (英文或長名稱)
+    
+    參數：
+        stock_code (str): yahoo股票代碼
+    
+    返回：
+        name (str): 股價名稱
+    """
+    
     try:
         ticker = yf.Ticker(stock_code)
         info = ticker.info

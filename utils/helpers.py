@@ -9,8 +9,16 @@ import logging
 # from datetime import datetime, timedelta
 
 def setup_logger(name="app", level=logging.INFO):
-    """TODO: Add docstring for def setup_logger(name="app", level=logging.INFO):"""
-    """建立統一日誌紀錄器"""
+    """
+    建立統一日誌紀錄器
+    
+    參數：
+        name (str): 預設名稱
+        level (int): 預設類型
+    
+    返回：
+        logging.getLogger(name)
+    """
     os.makedirs("data/logs", exist_ok=True)
     log_path = os.path.join("data/logs", f"{name}.log")
 

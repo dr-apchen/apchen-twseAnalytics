@@ -14,11 +14,16 @@ from data_collector.twse_crawler import fetch_twse_stock_list
 logger = setup_logger("data_loder")
 
 def insert_stock_price(data):
-    """TODO: Add docstring for def insert_stock_price(data):"""
     """
     將股價資料寫入 stock_price_daily
-    data 為 list[dict]，每筆 dict 需包含：
+    每筆 dict 需包含：
     ['stock_id', 'trade_date', 'open_price', 'high_price', 'low_price', 'close_price', 'volume']
+    
+    參數：
+        data (dict): 股價資訊
+    
+    返回：
+        df_summary (pd.Dataframe): 股價摘要
     """
     if not data:
         print("⚠️ 無資料可寫入。")

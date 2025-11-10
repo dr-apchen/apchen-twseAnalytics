@@ -8,7 +8,15 @@ import unittest
 from database.db_connection import get_connection
 
 class TestDatabase(unittest.TestCase):
-    """TODO: Add docstring for class TestDatabase(unittest.TestCase):"""
+    """
+    基礎資料庫測試
+    
+    參數：
+        unittest.TestCase
+    
+    返回：
+        NA
+    """
     def test_connection(self):
         """TODO: Add docstring for def test_connection(self):"""
         conn = get_connection()

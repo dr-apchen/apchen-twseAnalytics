@@ -51,3 +51,57 @@
 [2025-11-07 10:31:01] 🚀 執行命令: C:\ProgramData\anaconda3\python.exe -m pdoc --output-dir docs main setup_env analytics.indicators analytics.portfolio_stats analytics.trend_analysis database.data_loader database.db_config database.db_connection database.stock_info_manager data_collector.data_updater data_collector.scheduler data_collector.twse_crawler data_collector.twstock_api data_collector.yahoo_api tests.test_data_loader utils.docstring_helper utils.helpers utils.stock_info_map visualization.chart_utils visualization.dashboard visualization.summary_table
 [2025-11-07 10:31:10] ✅ 文件已生成：D:\Project\twseAnalytics\docs
 [2025-11-07 10:31:10] 🌐 已自動開啟瀏覽器：D:\Project\twseAnalytics\docs\index.html
+[2025-11-07 13:57:13] 📂 已切換至專案根目錄：D:\Project\twseAnalytics
+[2025-11-07 13:57:13] 🧩 已啟用 safe_imports 模式（忽略 import 錯誤）
+[2025-11-07 13:57:13] 🧠 發現 21 個模組待生成：
+[2025-11-07 13:57:13]    - main
+[2025-11-07 13:57:13]    - setup_env
+[2025-11-07 13:57:13]    - analytics.indicators
+[2025-11-07 13:57:13]    - analytics.portfolio_stats
+[2025-11-07 13:57:13]    - analytics.trend_analysis
+[2025-11-07 13:57:13]    - database.data_loader
+[2025-11-07 13:57:13]    - database.db_config
+[2025-11-07 13:57:13]    - database.db_connection
+[2025-11-07 13:57:13]    - database.stock_info_manager
+[2025-11-07 13:57:13]    - data_collector.data_updater
+[2025-11-07 13:57:13]    - data_collector.scheduler
+[2025-11-07 13:57:13]    - data_collector.twse_crawler
+[2025-11-07 13:57:13]    - data_collector.twstock_api
+[2025-11-07 13:57:13]    - data_collector.yahoo_api
+[2025-11-07 13:57:13]    - tests.test_data_loader
+[2025-11-07 13:57:13]    - utils.docstring_helper
+[2025-11-07 13:57:13]    - utils.helpers
+[2025-11-07 13:57:13]    - utils.stock_info_map
+[2025-11-07 13:57:13]    - visualization.chart_utils
+[2025-11-07 13:57:13]    - visualization.dashboard
+[2025-11-07 13:57:13]    - visualization.summary_table
+[2025-11-07 13:57:13] 🚀 執行命令: C:\ProgramData\anaconda3\python.exe -m pdoc --output-dir docs main setup_env analytics.indicators analytics.portfolio_stats analytics.trend_analysis database.data_loader database.db_config database.db_connection database.stock_info_manager data_collector.data_updater data_collector.scheduler data_collector.twse_crawler data_collector.twstock_api data_collector.yahoo_api tests.test_data_loader utils.docstring_helper utils.helpers utils.stock_info_map visualization.chart_utils visualization.dashboard visualization.summary_table
+[2025-11-07 13:57:26] ✅ 文件已生成：D:\Project\twseAnalytics\docs
+[2025-11-07 13:57:26] 🌐 已自動開啟瀏覽器：D:\Project\twseAnalytics\docs\index.html
+[2025-11-07 14:14:39] 📂 已切換至專案根目錄：D:\Project\twseAnalytics
+[2025-11-07 14:14:39] 🧩 已啟用 safe_imports 模式（忽略 import 錯誤）
+[2025-11-07 14:14:39] 🧠 發現 21 個模組待生成：
+[2025-11-07 14:14:39]    - main
+[2025-11-07 14:14:39]    - setup_env
+[2025-11-07 14:14:39]    - analytics.indicators
+[2025-11-07 14:14:39]    - analytics.portfolio_stats
+[2025-11-07 14:14:39]    - analytics.trend_analysis
+[2025-11-07 14:14:39]    - database.data_loader
+[2025-11-07 14:14:39]    - database.db_config
+[2025-11-07 14:14:39]    - database.db_connection
+[2025-11-07 14:14:39]    - database.stock_info_manager
+[2025-11-07 14:14:39]    - data_collector.data_updater
+[2025-11-07 14:14:39]    - data_collector.scheduler
+[2025-11-07 14:14:39]    - data_collector.twse_crawler
+[2025-11-07 14:14:39]    - data_collector.twstock_api
+[2025-11-07 14:14:39]    - data_collector.yahoo_api
+[2025-11-07 14:14:39]    - tests.test_data_loader
+[2025-11-07 14:14:39]    - utils.docstring_helper
+[2025-11-07 14:14:39]    - utils.helpers
+[2025-11-07 14:14:39]    - utils.stock_info_map
+[2025-11-07 14:14:39]    - visualization.chart_utils
+[2025-11-07 14:14:39]    - visualization.dashboard
+[2025-11-07 14:14:39]    - visualization.summary_table
+[2025-11-07 14:14:39] 🚀 執行命令: C:\ProgramData\anaconda3\python.exe -m pdoc --output-dir docs main setup_env analytics.indicators analytics.portfolio_stats analytics.trend_analysis database.data_loader database.db_config database.db_connection database.stock_info_manager data_collector.data_updater data_collector.scheduler data_collector.twse_crawler data_collector.twstock_api data_collector.yahoo_api tests.test_data_loader utils.docstring_helper utils.helpers utils.stock_info_map visualization.chart_utils visualization.dashboard visualization.summary_table
+[2025-11-07 14:14:57] ✅ 文件已生成：D:\Project\twseAnalytics\docs
+[2025-11-07 14:14:57] 🌐 已自動開啟瀏覽器：D:\Project\twseAnalytics\docs\index.html

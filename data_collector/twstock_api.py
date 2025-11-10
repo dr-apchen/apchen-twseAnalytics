@@ -16,7 +16,15 @@ logger = setup_logger("twstock_api")
 stockData = {}
 
 def fetch_stock_data(stock_code):
-    """TODO: Add docstring for def fetch_stock_data(stock_code):"""
+    """
+    抓取TWSE股票歷史資料
+    
+    參數：
+        stock_code (str): 股票代碼
+    
+    返回：
+        NA
+    """
 
     if type(stock_code) is str:
         print(stock_code)
@@ -47,7 +55,15 @@ def fetch_stock_data(stock_code):
         # df.to_csv("data/twstock_data"+formatted_string+".csv", index=False, encoding="utf-8-sig")
     
 def fetch_stock_name(stock_code: str) -> str:
-    """TODO: Add docstring for def fetch_stock_name(stock_code: str) -> str:"""
+    """
+    抓取TWSE股票資料
+    
+    參數：
+        stock_code (str): 股票代碼
+    
+    返回：
+        NA
+    """
 
     # print(twstock.codes)                # 列印台股全部證券編碼資料
     print(twstock.codes[stock_code])        # 列印 2330 證券編碼資料

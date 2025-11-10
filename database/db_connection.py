@@ -12,8 +12,15 @@ from database.db_config import DB_CONFIG
 logger = setup_logger("db_connection")
 
 def get_connection():
-    """TODO: get_connection():"""
-    """建立資料庫連線"""
+    """
+    建立資料庫連線
+    
+    參數：
+        NA
+    
+    返回：
+        connection (mysql.connector.connect())
+    """
     try:
         connection = mysql.connector.connect(**DB_CONFIG)
         if connection.is_connected():
@@ -24,8 +31,15 @@ def get_connection():
         return None
 
 def close_connection(connection):
-    """TODO: Add docstring for def close_connection(connection):"""
-    """關閉資料庫連線"""
+    """
+    關閉資料庫連線
+    
+    參數：
+        connection (mysql.connector.connect())
+    
+    返回：
+        NA
+    """
     if connection and connection.is_connected():
         connection.close()
         print("🔌 資料庫連線已關閉")

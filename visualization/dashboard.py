@@ -27,7 +27,7 @@ from data_collector.data_updater import fetch_and_store, check_stock_data_exists
 
 logger = setup_logger("dashboard")
 
-def ensure_data_completeness(stock_id, start_date, end_date):
+def ensure_data_completeness(stock_id: str, start_date: str, end_date: str):
     """
     檢查資料是否完整，若缺少日期範圍內的最新資料則自動抓取補齊。
     
@@ -167,7 +167,7 @@ def run_dashboard():
     st.sidebar.markdown("---")
     st.sidebar.markdown("**版本**：Beta 1.0")
             
-def generate_charts(df: pd.DataFrame, stock_name = str):
+def generate_charts(df: pd.DataFrame, stock_name: str):
     """
     檢查資料是否完整，若缺少日期範圍內的最新資料則自動抓取補齊。
     

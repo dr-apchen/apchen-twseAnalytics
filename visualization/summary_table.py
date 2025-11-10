@@ -16,7 +16,15 @@ from analytics.portfolio_stats import (
 logger = setup_logger("summary_table")
 
 def build_summary_table(stock_data_dict: dict) -> pd.DataFrame:
-    """TODO: Add docstring for def build_summary_table(stock_data_dict: dict) -> pd.DataFrame:"""
+    """
+    建立多股票技術指標摘要表格並匯出檔案
+    
+    參數：
+        stock_data_dict (dict): 股價資料
+    
+    返回型別：
+        pd.Dataframe
+    """
     df_summary = generate_summary_table(stock_data_dict)
     st.dataframe(
         df_summary.style.highlight_max(

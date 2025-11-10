@@ -20,8 +20,17 @@ logger = setup_logger("data_updater")
 # 載入資料
 # ---------------------
 def load_stock_data(stock_id: str, start_date: str = None, end_date: str = None) -> pd.DataFrame:
-    """TODO: Add docstring for def load_stock_data(stock_id: str, start_date: str = None, end_date: str = None) -> pd.DataFrame:"""
-    """從資料庫讀取股價資料"""
+    """
+    從資料庫讀取股價資料
+    
+    參數：
+        stock_id (str): 股票代碼
+        start_date (str): 查詢起始日期
+        end_date (str): 查詢結束日期
+    
+    返回：
+        df (pd.Dataframe): 股價資料
+    """
     conn = get_connection()
     if not conn:
         return pd.DataFrame()
@@ -53,7 +62,18 @@ def load_stock_data(stock_id: str, start_date: str = None, end_date: str = None)
 # 資料檢查
 # ---------------------
 def check_stock_data_exists(stock_id: str, start_date: str, end_date: str) -> bool:
-    """TODO: Add docstring for def check_stock_data_exists(stock_id: str, start_date: str, end_date: str) -> bool:"""
+    """
+    確認目標股股價資料存在於資料庫
+    
+    參數：
+        stock_id (str): 股票代碼
+        start_date (str): 查詢起始日期
+        end_date (str): 查詢結束日期
+    
+    返回：
+        count > 0 (bool)
+    """
+    
     conn = get_connection()
     if not conn:
         return False
@@ -72,8 +92,17 @@ def check_stock_data_exists(stock_id: str, start_date: str, end_date: str) -> bo
 # 動態抓資料
 # ---------------------
 def fetch_and_store(stock_id: str, start_date: str, end_date: str):
-    """TODO: Add docstring for def fetch_and_store(stock_id: str, start_date: str, end_date: str):"""
-    """抓取資料並寫入資料庫，stock_name 可自動抓取"""
+    """
+    抓取資料並寫入資料庫，stock_name 可自動抓取
+    
+    參數：
+        stock_id (str): 股票代碼
+        start_date (str): 查詢起始日期
+        end_date (str): 查詢結束日期
+    
+    返回：
+        NA
+    """
     
     if stock_id.isdigit() and len(stock_id) == 4:  # 台股
         stock_name = get_stock_name(stock_id)
@@ -92,7 +121,17 @@ def fetch_and_store(stock_id: str, start_date: str, end_date: str):
         print("⚠️ 無資料可寫入")
         
 def get_stock_latest_date(cursor, stock_id):
-    """TODO: Add docstring for def get_stock_latest_date(cursor, stock_id):"""
+    """
+    從資料庫讀取股價資料"
+    
+    參數：
+        cursor (conn.cursor(dictionary=True))
+        stock_id (str): 股票代碼
+    
+    返回：
+        df (pd.Dataframe): 資料庫最新交易日
+    """
+    
     query = """
         SELECT MAX(trade_date)
         FROM stock_price_daily
@@ -104,9 +143,18 @@ def get_stock_latest_date(cursor, stock_id):
 
 
 def update_stock_if_needed(stock_id, stock_name, start_date=None, end_date=None, days_tolerance=1):
-    """TODO: Add docstring for def update_stock_if_needed(stock_id, stock_name, start_date=None, end_date=None, days_tolerance=1):"""
     """
     檢查個別股票是否最新，若缺資料則自動更新。
+    
+    參數：
+        stock_id (str): 股票代碼
+        stock_name (str): 股票名稱
+        start_date (str): 查詢起始日期
+        end_date (str): 查詢結束日期
+        days_tolerance (int): 緩衝區間
+    
+    返回：
+        updated (bool): 更新成功與否
     """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -128,10 +176,16 @@ def update_stock_if_needed(stock_id, stock_name, start_date=None, end_date=None,
 
 
 def update_all_stocks(days_tolerance=1):
-    """TODO: Add docstring for def update_all_stocks(days_tolerance=1):"""
     """
     檢查所有股票資料是否為最新，如缺少最近資料則自動補抓。
+    
+    參數：
+        days_tolerance (int): 緩衝區間
+    
+    返回：
+        NA
     """
+    
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
 

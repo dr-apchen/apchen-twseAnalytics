@@ -1,4 +1,4 @@
-# 動態股市分析平台(上市上櫃)
+# 個人化股市(上市上櫃)趨勢分析小精靈
 verson: 1.0
 
 ### 初始化環境
@@ -13,7 +13,7 @@ pip install -r requirements.txt
 ```
 ***
 ### 專案架構
-##### 參考 ([自動生成技術文件檔](https://htmlpreview.github.io/?https://github.com/dr-apchen/apchen-twseAnalytics/blob/main/docs/index.html))
+##### 參考  *[Docstring File](https://github.com/dr-apchen/apchen-twseAnalytics/blob/main/docs/index.html)*
 ```
 twseAnalytics/
 │

@@ -10,11 +10,21 @@ from database.db_connection import get_connection, close_connection
 logger = setup_logger("stock_info_manager")
 
 def ensure_stock_exists(stock_id: str, stock_name: str, industry: str = "未知", market_type: str = "TWSE", listing_date: str = None):
-    """TODO: Add docstring for def ensure_stock_exists(stock_id: str, stock_name: str, industry: str = "未知", market_type: str = "TWSE", listing_date: str = None):"""
     """
     確保指定股票代號存在於 stock_info 表中
     若不存在，則自動插入一筆基本資料
+    
+    參數：
+        stock_id (str): : 股票代碼
+        stock_name (str): 股票名稱
+        industry (str): 產業別
+        market_type (str): 市場類型
+        listing_date (str): 上市日期
+    
+    返回：
+        True
     """
+    
     conn = get_connection()
     if not conn:
         return False

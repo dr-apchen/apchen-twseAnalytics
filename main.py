@@ -6,16 +6,22 @@
 
 from utils.helpers import setup_logger
 import sys
-from datetime import datetime
 import subprocess
-import schedule
-import time
 from visualization.dashboard import ensure_data_completeness
+from datacollector.scheduler import run_scheduler
 
 logger = setup_logger("main")
 
 def main():
-    """TODO: Add docstring for def main():"""
+    """
+    分為fetch/dashboard模式，預設為dashboard模式開始主頁面
+    
+    參數： 
+        NA
+    
+    返回：
+        NA
+    """
     cmd = sys.argv[1].lower() if len(sys.argv) > 1 else "dashboard"
 
     if cmd == "fetch":
@@ -37,17 +43,33 @@ def main():
 # 啟動 Dashboard
 # ---------------------
 def open_dashboard():
-    """TODO: Add docstring for def open_dashboard():"""
+    """
+    啟動 Dashboard
+    
+    參數：
+        NA
+    
+    返回：
+        NA
+    """
     print("🌐 啟動 Dashboard...")
     subprocess.run([sys.executable, "-m", "streamlit", "run", "visualization/dashboard.py"])
 
 # ---------------------
 # 每日排程
 # ---------------------
-def daily_task(stock_id: str):
-    """TODO: Add docstring for def daily_task(stock_id: str):"""
-    yesterday = (datetime.today()).strftime("%Y-%m-%d")
-    ensure_data_completeness(stock_id, start_date=yesterday, end_date=yesterday)
+def daily_task():
+    """
+    每日排程
+    
+    參數：
+        NA
+    
+    返回：
+        NA
+    """
+    run_scheduler()
+    
 
 # ---------------------
 # 主程式
