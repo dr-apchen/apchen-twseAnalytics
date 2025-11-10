@@ -7,7 +7,7 @@ data_collector/data_updater.py
 """
 
 from utils.helpers import setup_logger
-from datetime import date, timedelta
+from datetime import datetime, date, timedelta
 from database.db_connection import get_connection, close_connection
 from data_collector.yahoo_api import fetch_stock_data, fetch_stock_name
 from database.data_loader import insert_stock_price
@@ -111,7 +111,7 @@ def fetch_and_store(stock_id: str, start_date: str, end_date: str):
     else:
         stock_name = fetch_stock_name(stock_id)
 
-    print(f"🚀 開始抓取 {stock_id}.{stock_type} 股價資料...")
+    print(f"🚀 開始抓取 {stock_id} 股價資料...")
     data = fetch_stock_data(stock_id, start_date=start_date, end_date=end_date)
 
     if data:
@@ -131,15 +131,20 @@ def get_stock_latest_date(cursor, stock_id):
     返回：
         df (pd.Dataframe): 資料庫最新交易日
     """
-    
-    query = """
-        SELECT MAX(trade_date)
-        FROM stock_price_daily
-        WHERE stock_id = %s
-    """
-    cursor.execute(query, (stock_id,))
-    result = cursor.fetchone()
-    return result[0] if result and result[0] else None
+    if not stock_id:
+        print("⚠️ 遺失 stock ID")
+        return
+    else:
+        print(f"🚀 開始抓取 {stock_id} 最後交易日...")
+        query = """
+            SELECT MAX(trade_date)
+            FROM stock_price_daily
+            WHERE stock_id = %s
+        """
+        cursor.execute(query, (stock_id,))
+        result = cursor.fetchone()
+        
+        return result["MAX(trade_date)"] if result and result["MAX(trade_date)"] else None
 
 
 def update_stock_if_needed(stock_id, stock_name, start_date=None, end_date=None, days_tolerance=1):
@@ -162,10 +167,10 @@ def update_stock_if_needed(stock_id, stock_name, start_date=None, end_date=None,
     updated = False
 
     latest_date = get_stock_latest_date(cursor, stock_id)
-    if not latest_date or (today - latest_date.date()).days > days_tolerance:
+    if not latest_date or (today - latest_date).days > days_tolerance:
         print(f"🔄 更新中: {stock_id} {stock_name} (最後資料: {latest_date})")
         start_date = latest_date + timedelta(days=1) if latest_date else today - timedelta(days=365)
-        fetch_and_store(stock_id, start_date, end_date or today, stock_name)
+        fetch_and_store(stock_id, start_date, end_date or today)
         updated = True
     else:
         print(f"✅ {stock_id} {stock_name} 資料已是最新 ({latest_date})")
@@ -199,10 +204,10 @@ def update_all_stocks(days_tolerance=1):
         stock_name = stock["stock_name"]
         latest_date = get_stock_latest_date(cursor, stock_id)
 
-        if not latest_date or (today - latest_date.date()).days > days_tolerance:
+        if not latest_date or (today - latest_date).days > days_tolerance:
             print(f"🔄 更新中: {stock_id} {stock_name} (最後資料: {latest_date})")
             start_date = latest_date + timedelta(days=1) if latest_date else today - timedelta(days=365)
-            fetch_and_store(stock_id, start_date, today, stock_name)
+            fetch_and_store(stock_id, start_date, today)
             updated_count += 1
         else:
             print(f"✅ {stock_id} {stock_name} 資料已是最新 ({latest_date})")

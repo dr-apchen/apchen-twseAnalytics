@@ -28,7 +28,7 @@ def job():
     update_all_stocks()
     print("✅ 每日股價資料更新完成")
 
-def run_scheduler():
+def run_scheduler(t: str):
     """
     批次執行更新作業設定
     
@@ -39,8 +39,8 @@ def run_scheduler():
         NA
     """
     
-    schedule.every().day.at("14:30").do(job)
-    print("🕘 排程啟動，等待每日 14:30 自動抓取...")
+    schedule.every().day.at(t).do(job)
+    print(f"🕘 排程啟動，等待每日 {t} 自動抓取...")
 
     while True:
         schedule.run_pending()

@@ -8,7 +8,7 @@ from utils.helpers import setup_logger
 import sys
 import subprocess
 from visualization.dashboard import ensure_data_completeness
-from datacollector.scheduler import run_scheduler
+from data_collector.scheduler import run_scheduler
 
 logger = setup_logger("main")
 
@@ -32,10 +32,10 @@ def main():
 
     elif cmd == "dashboard":
         open_dashboard()
-
-        # while True:
-        #     schedule.run_pending()
-        #     time.sleep(30)
+        
+    elif cmd == "daily":
+        t = sys.argv[2].lower() if len(sys.argv) > 2 else "09:30"
+        daily_task(t)
     else:
         print("未知參數，請使用 fetch 或 dashboard")
         
@@ -58,7 +58,7 @@ def open_dashboard():
 # ---------------------
 # 每日排程
 # ---------------------
-def daily_task():
+def daily_task(t: str):
     """
     每日排程
     
@@ -68,7 +68,7 @@ def daily_task():
     返回：
         NA
     """
-    run_scheduler()
+    run_scheduler(t)
     
 
 # ---------------------
@@ -76,4 +76,5 @@ def daily_task():
 # ---------------------
 if __name__ == "__main__":
     main()
+    
 
