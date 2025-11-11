@@ -17,11 +17,11 @@ pip install -r requirements.txt
 ```
 pip main.py dashboard
 ```
-2. fetch: 獲取股價資料
+2. fetch: 手動獲取股價資料
 ```
 pip main.py fecth
 ```
-3. daily: 每日排程更新資料 (daily 後方時間可選填，不填為預設 09:30)
+3. daily: 每日排程自動更新資料 (daily 後方時間可選填，不填為預設 09:30)
 ```
 pip main.py daily 14:30
 ```
