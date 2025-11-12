@@ -253,8 +253,13 @@ def hot_stock_fetcher() -> str:
         str
     """
     # 🔥 熱門股票區塊
+    LIMIT_NUM = 10
     hot_df = load_hot_stocks_from_cache()
+    if hot_df.empty:
+        hot_df = merge_and_save_hot_stocks(limit=LIMIT_NUM)
+        
     if not hot_df.empty:
+        hot_df = hot_df.head(LIMIT_NUM)
         stock_hot = st.sidebar.selectbox(
             "選擇熱門股票", [""] + [f"{r.StockName}（{r.StockID}）" for _, r in hot_df.iterrows()]
         )
@@ -263,19 +268,20 @@ def hot_stock_fetcher() -> str:
             st.session_state["selected_stock"] = stock_id
             
         st.session_state.caption_message = f"📅 熱門股更新至：{hot_df['UpdateTime'][0]}"
-        hot_stock_fetcher_update()    
-
+        hot_stock_fetcher_update(LIMIT_NUM)    
+        
+        
     # 若使用者已選熱門股則帶入
     selected_stock = st.session_state.get("selected_stock", "")
     return selected_stock
     # print(selected_stock)    
     
-def hot_stock_fetcher_update():
+def hot_stock_fetcher_update(limit: int = 10):
     """
     熱門股清單更新
     
     參數：
-        NA
+        limit (int): 筆數 (預設10)
     
     返回：
         NA
@@ -292,13 +298,12 @@ def hot_stock_fetcher_update():
     
     # 3. 定義回調函數
     def update_message():
-        with st.spinner(f"🔄 載入最新熱門股票清單..."):
-            hot_df = merge_and_save_hot_stocks(limit=10)
-            success_placeholder.success(f"✅ 已更新熱門股（共 {len(hot_df)} 筆）")
+        with st.spinner(f"載入最新熱門股票清單..."):
+            hot_df = merge_and_save_hot_stocks(limit=limit)
+            success_placeholder.success(f"✅ 已更新熱門股（共 {limit} 筆）")
             time.sleep(3)
             success_placeholder.empty()
             
-        """根據傳入值和當前計數器來更新 session_state 中的訊息。"""
         st.session_state.counter += 1
         # 使用傳入的 prefix_text 參數
         st.session_state.caption_message = f"📅 熱門股更新至：{hot_df['UpdateTime'][0]}"
