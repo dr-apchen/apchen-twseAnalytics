@@ -56,7 +56,7 @@ def fetch_stock_name(stock_code: str) -> str:
     try:
         ticker = yf.Ticker(stock_code)
         info = ticker.info
-        name = info.get("shortName") or info.get("longName") or stock_code.split(".")[0]
+        name = info.get("longName") or info.get("shortName") or stock_code.split(".")[0]
         return name
     except:
         return stock_code.split(".")[0]

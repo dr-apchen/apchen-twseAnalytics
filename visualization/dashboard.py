@@ -60,7 +60,7 @@ def ensure_data_completeness(stock_id: str, start_date: str, end_date: str):
     df = load_stock_data(stock_id, start_date, end_date)
     
     if df.empty:
-        st.error("❌ 抓取 {stock_id} 資料失敗，請檢查股票代碼或網路連線")
+        st.error(f"❌ 抓取 {stock_id} 資料失敗，請檢查股票代碼或網路連線")
         
     # Step 3: 偵測資料庫缺口
     else:
