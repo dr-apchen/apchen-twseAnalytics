@@ -72,7 +72,7 @@ twseAnalytics/
 ### 功能分析
 | 分類      | 模組                                            | 功能概要                   |
 | :-------: | --------------------------------------------- | ---------------------- |
-| 📥<br/>資料蒐集 | twse_crawler / yahoo_api / data_updater / hot_stock_fetcher      | 自動抓取台股清單、股價資料、熱門清單、補缺漏資料    |
+| 📥<br/>資料蒐集 | twse_crawler / yahoo_api / data_updater / hot_stock_fetcher      | 自動抓取台股清單、股價資料、熱門清單、<br/>補缺漏資料    |
 | 🧩<br/>資料庫  | db_config / db_connection / data_loader / stock_info_manager      | 管理 MySQL 存取與寫入         |
 | 🕘<br/>排程  | scheduler      | 每日股價更新排程         |
 | 📊<br/>分析   | indicators / trend_analysis / portfolio_stats | 技術指標計算、自動趨勢解讀、投資組合分析   |
