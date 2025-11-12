@@ -1,4 +1,5 @@
 # 動態股市趨勢分析小精靈 (台股上市上櫃)
+
 verson: 1.0
 
 ### 初始化環境
@@ -80,3 +81,9 @@ twseAnalytics/
 | 🧰<br/>工具   | stock_info_map / helpers                               | 股票資訊對照與更新、共用函式 |
 | 🚀<br/>系統主控 | main                                       | 啟動流程、自動更新、執行 Dashboard |
 
+***
+### 簡報介紹
+<br/>
+<a href="https://reurl.cc/xKEkm5" target="_blank">
+<img width="250" height="250" alt="qrcode" src="https://github.com/user-attachments/assets/2c04e7ca-ab46-4be4-b7ec-14dd5b9cbdf6" />
+</a>
