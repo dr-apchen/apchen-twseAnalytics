@@ -108,10 +108,10 @@ main    </h1>
 </span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>
 </span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>    <span class="k">elif</span> <span class="n">cmd</span> <span class="o">==</span> <span class="s2">&quot;dashboard&quot;</span><span class="p">:</span>
 </span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>        <span class="n">open_dashboard</span><span class="p">()</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>        <span class="c1"># while True:</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>        <span class="c1">#     schedule.run_pending()</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>        <span class="c1">#     time.sleep(30)</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>        
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>    <span class="k">elif</span> <span class="n">cmd</span> <span class="o">==</span> <span class="s2">&quot;daily&quot;</span><span class="p">:</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>        <span class="n">t</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="k">else</span> <span class="s2">&quot;09:30&quot;</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>        <span class="n">daily_task</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
 </span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>    <span class="k">else</span><span class="p">:</span>
 </span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;未知參數，請使用 fetch 或 dashboard&quot;</span><span class="p">)</span>
 </span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>        
@@ -134,7 +134,7 @@ main    </h1>
 </span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a><span class="c1"># ---------------------</span>
 </span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a><span class="c1"># 每日排程</span>
 </span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a><span class="c1"># ---------------------</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a><span class="k">def</span><span class="w"> </span><span class="nf">daily_task</span><span class="p">():</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a><span class="k">def</span><span class="w"> </span><span class="nf">daily_task</span><span class="p">(</span><span class="n">t</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 </span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a><span class="sd">    每日排程</span>
 </span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a><span class="sd">    </span>
@@ -144,7 +144,7 @@ main    </h1>
 </span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a><span class="sd">    返回：</span>
 </span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a><span class="sd">        NA</span>
 </span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>    <span class="n">run_scheduler</span><span class="p">()</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>    <span class="n">run_scheduler</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
 </span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>    
 </span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>
 </span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a><span class="c1"># ---------------------</span>
@@ -152,6 +152,7 @@ main    </h1>
 </span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a><span class="c1"># ---------------------</span>
 </span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
 </span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>    <span class="n">main</span><span class="p">()</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>    
 </span></pre></div>
 
 
@@ -199,10 +200,10 @@ main    </h1>
 </span><span id="main-33"><a href="#main-33"><span class="linenos">33</span></a>
 </span><span id="main-34"><a href="#main-34"><span class="linenos">34</span></a>    <span class="k">elif</span> <span class="n">cmd</span> <span class="o">==</span> <span class="s2">&quot;dashboard&quot;</span><span class="p">:</span>
 </span><span id="main-35"><a href="#main-35"><span class="linenos">35</span></a>        <span class="n">open_dashboard</span><span class="p">()</span>
-</span><span id="main-36"><a href="#main-36"><span class="linenos">36</span></a>
-</span><span id="main-37"><a href="#main-37"><span class="linenos">37</span></a>        <span class="c1"># while True:</span>
-</span><span id="main-38"><a href="#main-38"><span class="linenos">38</span></a>        <span class="c1">#     schedule.run_pending()</span>
-</span><span id="main-39"><a href="#main-39"><span class="linenos">39</span></a>        <span class="c1">#     time.sleep(30)</span>
+</span><span id="main-36"><a href="#main-36"><span class="linenos">36</span></a>        
+</span><span id="main-37"><a href="#main-37"><span class="linenos">37</span></a>    <span class="k">elif</span> <span class="n">cmd</span> <span class="o">==</span> <span class="s2">&quot;daily&quot;</span><span class="p">:</span>
+</span><span id="main-38"><a href="#main-38"><span class="linenos">38</span></a>        <span class="n">t</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="k">else</span> <span class="s2">&quot;09:30&quot;</span>
+</span><span id="main-39"><a href="#main-39"><span class="linenos">39</span></a>        <span class="n">daily_task</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
 </span><span id="main-40"><a href="#main-40"><span class="linenos">40</span></a>    <span class="k">else</span><span class="p">:</span>
 </span><span id="main-41"><a href="#main-41"><span class="linenos">41</span></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;未知參數，請使用 fetch 或 dashboard&quot;</span><span class="p">)</span>
 </span></pre></div>
@@ -261,13 +262,13 @@ main    </h1>
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">daily_task</span><span class="signature pdoc-code condensed">(<span class="return-annotation">):</span></span>
+        <span class="name">daily_task</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">t</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">):</span></span>
 
                 <label class="view-source-button" for="daily_task-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#daily_task"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="daily_task-62"><a href="#daily_task-62"><span class="linenos">62</span></a><span class="k">def</span><span class="w"> </span><span class="nf">daily_task</span><span class="p">():</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="daily_task-62"><a href="#daily_task-62"><span class="linenos">62</span></a><span class="k">def</span><span class="w"> </span><span class="nf">daily_task</span><span class="p">(</span><span class="n">t</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 </span><span id="daily_task-63"><a href="#daily_task-63"><span class="linenos">63</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="daily_task-64"><a href="#daily_task-64"><span class="linenos">64</span></a><span class="sd">    每日排程</span>
 </span><span id="daily_task-65"><a href="#daily_task-65"><span class="linenos">65</span></a><span class="sd">    </span>
@@ -277,7 +278,7 @@ main    </h1>
 </span><span id="daily_task-69"><a href="#daily_task-69"><span class="linenos">69</span></a><span class="sd">    返回：</span>
 </span><span id="daily_task-70"><a href="#daily_task-70"><span class="linenos">70</span></a><span class="sd">        NA</span>
 </span><span id="daily_task-71"><a href="#daily_task-71"><span class="linenos">71</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="daily_task-72"><a href="#daily_task-72"><span class="linenos">72</span></a>    <span class="n">run_scheduler</span><span class="p">()</span>
+</span><span id="daily_task-72"><a href="#daily_task-72"><span class="linenos">72</span></a>    <span class="n">run_scheduler</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
 </span></pre></div>
 
 
