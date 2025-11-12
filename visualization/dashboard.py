@@ -179,7 +179,7 @@ def run_dashboard():
                         
             
     st.sidebar.markdown("---")
-    st.sidebar.markdown("**版本**：Beta 1.0")
+    st.sidebar.markdown("**版本**： Beta 1.0")
             
 def generate_charts(df: pd.DataFrame, stock_name: str):
     """
