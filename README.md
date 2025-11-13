@@ -28,7 +28,7 @@ pip main.py daily 14:30
 ```
 ***
 ### 專案架構
-##### 參考  *[Docstring File](https://github.com/dr-apchen/apchen-twseAnalytics/blob/main/docs/index.html)*
+##### 參考  *[Docstring File](https://htmlpreview.github.io/?https://github.com/dr-apchen/apchen-twseAnalytics/blob/main/docs/index.html)*
 ```
 twseAnalytics/
 │
