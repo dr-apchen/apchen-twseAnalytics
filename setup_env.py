@@ -15,6 +15,7 @@ import sys
 REQUIRED_PACKAGES = [
     "yfinance",
     "pandas",
+    "selenium",
     "mysql-connector-python",
     "schedule",
     "streamlit",
