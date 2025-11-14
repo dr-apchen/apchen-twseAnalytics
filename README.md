@@ -3,12 +3,20 @@
 verson: 1.0
 
 ### 初始化環境
-```
-python setup_env.py  --初始化環境
-python main.py  --啟動專案
-```
+1. 安裝MySQL
+2. 進入 *[db_config.py](https://github.com/dr-apchen/apchen-twseAnalytics/blob/main/database/db_config.py)* 修改資料庫連線設定
+3. 開啟 MSQL 輸入 *[table.sql](https://github.com/dr-apchen/apchen-twseAnalytics/blob/main/database/table.sql)* 所提供指令建立資料表
+4. 執行程式
+   ```
+   python setup_env.py  --初始化環境
+   ```
+5. 確認環境測試通過後執行主程式
+   ```
+   python main.py  --啟動專案
+   ```
 ***
-### 快速安裝專案環境
+### 手動安裝專案環境
+如套件發生問題，可透過手動方式安裝環境需求套件。
 ```
 pip install -r requirements.txt
 ```
