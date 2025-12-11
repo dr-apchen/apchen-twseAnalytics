@@ -33,6 +33,15 @@ from data_collector.hot_stock_fetcher import (
 )
 from utils.helpers import setup_logger
 
+# 假設 data_loader 已配置好
+from analytics.portfolio_stats import (
+    calculate_annualized_return, 
+    calculate_annualized_volatility, 
+    calculate_max_drawdown
+)
+from visualization.chart_utils import plot_cumulative_returns_and_drawdown # 引入新圖表函式
+
+
 logger = setup_logger("dashboard")
 
 def ensure_data_completeness(stock_id: str, start_date: str, end_date: str):
@@ -240,7 +249,13 @@ def generate_charts(df: pd.DataFrame, stock_name: str):
         # -----------------------------
         fig_vol = plot_volume(df, stock_name, ma_volume="volume_MA5")
         fig_vol.data[1].name = "成交量 5 日均線"
-        if fig_vol: st.plotly_chart(fig_vol, use_container_width=True)    
+        if fig_vol: st.plotly_chart(fig_vol, use_container_width=True) 
+    
+    # 假設在 Streamlit 的主要運行邏輯中呼叫：
+    if df is not None:
+        render_performance_metrics(df, stock_name)
+    
+    
     
 def hot_stock_fetcher() -> str:
     """
@@ -315,6 +330,53 @@ def hot_stock_fetcher_update(limit: int = 10):
     st.sidebar.button("更新熱門股清單", on_click = lambda: update_message())
     
     success_placeholder = st.sidebar.empty()
+    
+def render_performance_metrics(stock_data_df: pd.DataFrame, stock_name: str):
+    
+    st.subheader(f"🔔 {stock_name} 績效與風險統計")
+    
+    # 取得收盤價序列
+    prices = stock_data_df['close_price']
+    
+    # 計算日報酬率
+    returns = prices.pct_change().dropna()
+
+    # --- 1. 計算所有指標 ---
+    try:
+        ann_return = calculate_annualized_return(returns)
+        max_drawdown = calculate_max_drawdown(prices)
+        volatility = calculate_annualized_volatility(returns)
+        
+        # 為了計算夏普比率，假設無風險利率為 2% (0.02)
+        risk_free_rate = 0.02
+        sharpe_ratio = (ann_return - risk_free_rate) / volatility if volatility != 0 else 0
+
+    except Exception as e:
+        st.error(f"計算績效指標時發生錯誤: {e}")
+        return
+
+    # --- 2. 視覺化：數值摘要卡片 ---
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.metric("年化報酬率", f"{ann_return:.2%}", help="代表資產每年平均回報")
+    with col2:
+        # 最大回撤通常為負值，但顯示時習慣用正值
+        st.metric("最大回撤 (MDD)", f"{abs(max_drawdown):.2%}", help="從高點到低點的最大跌幅")
+    with col3:
+        st.metric("年化波動率", f"{volatility:.2%}", help="衡量價格波動風險")
+    with col4:
+        st.metric("夏普比率", f"{sharpe_ratio:.2f}", help="每承擔一單位風險所獲得的超額報酬")
+
+    st.markdown("---")
+    
+    # --- 3. 視覺化：累積報酬率圖表 ---
+    st.subheader(f"🔔 {stock_name} 累積報酬與回撤趨勢")
+    fig = plot_cumulative_returns_and_drawdown(prices, stock_name)
+    st.plotly_chart(fig, use_container_width=True)
+
+    
+    
     
 if __name__ == "__main__":
     run_dashboard()       
