@@ -9,6 +9,7 @@ from utils.helpers import setup_logger
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 import pandas as pd
+import random
 
 logger = setup_logger("chart_utils")
 
@@ -261,5 +262,151 @@ def plot_cumulative_returns_and_drawdown(
     # 調整 Y 軸為百分比格式 (累積報酬率圖，如果需要)
     fig.update_yaxes(title_text="累積淨值", row=1, col=1)
     fig.update_yaxes(title_text="深度", tickformat=".0%", row=2, col=1)
+    
+    return fig
+
+
+def plot_industry_cumulative_return(
+    data_with_returns: pd.DataFrame, 
+    industry_daily_perf: pd.DataFrame,
+    stock_ranking_df: pd.DataFrame, # 個股總報酬率排行榜
+    n_highlight: int = 5            # 突顯的數量
+) -> go.Figure:
+    """
+    繪製單一產業內所有股票的累積報酬率，並疊加產業平均累積報酬率。
+
+    Args:
+        data_with_returns (pd.DataFrame): 包含個股日報酬率 ('daily_return') 的數據。
+        industry_daily_perf (pd.DataFrame): 包含產業平均累積報酬率 ('cumulative_return') 的數據。
+        stock_ranking_df (pd.DataFrame): 個股總報酬率排行榜
+        n_highlight (int) = 5: 突顯的數量
+
+    Returns:
+        fig (go.Figure): 圖表物件。
+    """
+    if data_with_returns.empty or industry_daily_perf.empty:
+        return go.Figure().update_layout(title="無數據可供繪製")
+
+    industry_name = data_with_returns['industry'].iloc[0]
+    
+    # 1. 計算個股累積報酬率
+    data_with_returns['trade_date'] = pd.to_datetime(data_with_returns['trade_date'])
+    
+    # 計算累積報酬率，並將結果儲存在一個新的 DataFrame 中
+    
+    # 建立一個包含 stock_id, trade_date, daily_return 的數據副本，確保操作不影響原始 df 
+    temp_df = data_with_returns[['stock_id', 'trade_date', 'daily_return']].copy()
+    
+    # 設置索引方便計算
+    temp_df = temp_df.set_index('trade_date').sort_index()
+
+    # 使用 groupby 算出累積報酬率
+    stock_cumulative_returns = temp_df.groupby('stock_id')['daily_return'].apply(
+        lambda x: (1 + x).cumprod()
+    ).reset_index() # <-- 使用 reset_index() 將 stock_id, trade_date 變回欄位
+    
+    # 重新命名累積報酬率的欄位
+    stock_cumulative_returns.rename(
+        columns={'daily_return': 'cumulative_return_stock'},
+        inplace=True
+    )
+
+    # 準備繪圖用的 Pivot Table
+    # 直接對包含所有必要欄位的 stock_cumulative_returns 進行 pivot 操作
+    data_for_plot = stock_cumulative_returns.pivot_table(
+        index='trade_date',
+        columns='stock_id',  # <-- 現在 stock_id 是一個欄位，可以正確引用
+        values='cumulative_return_stock'
+    )
+    
+
+    # --- 篩選 Top/Bottom N 股票代碼 ---
+    from analytics.industry_analysis import IndustryAnalyzer
+    highlight_stocks = IndustryAnalyzer.get_top_bottom_n_stocks(stock_ranking_df, n=n_highlight)
+    
+    fig = go.Figure()
+    
+    # 2. 繪製所有個股的累積報酬率
+    for stock_id in data_for_plot.columns:
+        
+        is_highlighted = stock_id in highlight_stocks
+        
+        if is_highlighted:
+            # --- Top/Bottom N 突顯線條 ---
+            # 獲取領漲股的集合
+            top_n_stocks = stock_ranking_df.head(n_highlight)['stock_id'].values
+            
+            if stock_id in top_n_stocks:
+                # 領漲股 (前 N 名)
+                line_color = "green"  # 鮮綠色
+                line_name_prefix = '領漲'
+            else:
+                # 落後股 (後 N 名)
+                line_color = "red" # 鮮紅色
+                line_name_prefix = '落後'
+
+            # --- 突顯線條設定 ---
+            line_width = 1.5 # 將線條加粗，更易於觀察
+            line_name = f'{line_name_prefix}: {stock_id}'
+            show_legend = True
+            
+        else:
+            # --- 其餘個股背景線條 (Spaghetti Plot 解決方案) ---
+            line_color = 'rgba(150, 150, 150, 0.5)' # 淺灰色，高透明度
+            line_width = 1
+            line_name = f'{stock_id}'
+            show_legend = False # 關鍵：移除圖例項目
+
+        fig.add_trace(
+            go.Scatter(
+                x=data_for_plot.index,
+                y=data_for_plot[stock_id],
+                mode='lines',
+                name=line_name,
+                line=dict(color=line_color, width=line_width),
+                hoverinfo='name+y',
+                showlegend=show_legend # 控制圖例顯示
+            )
+        )
+
+    # 3. 繪製產業平均累積報酬率 (使用粗體、深色作為主線)
+    # 確保 trade_date 也是索引
+    industry_daily_perf = industry_daily_perf.set_index('trade_date').sort_index()
+    
+    fig.add_trace(
+        go.Scatter(
+            x=industry_daily_perf.index,
+            y=industry_daily_perf['cumulative_return'],
+            mode='lines',
+            name=f'{industry_name} 產業平均',
+            line=dict(color='blue', width=1.5),
+            hovertemplate='日期: %{x}<br>平均累積報酬: %{y:.2f}<extra></extra>',
+            showlegend=True # 確保主線條顯示在圖例中
+        )
+    )
+
+    # 4. 調整佈局
+    fig.update_layout(
+        title={
+            'text': f'{industry_name} 產業累積報酬率趨勢 (與個股比較)',
+            'y':0.9,
+            'x':0.5,
+            'xanchor': 'center',
+            'yanchor': 'top'},
+        xaxis_title="日期",
+        yaxis_title="累積淨值 (基期=1.0)",
+        height=600,
+        hovermode="closest",
+        legend_title="圖例 (點擊隱藏/顯示)",
+        legend=dict(
+            orientation="v",  # 水平排列
+            yanchor="top",
+            y=1,
+            xanchor="left",
+            x=1
+        )
+    )
+    # 將 Y 軸起始點設為 1.0 (或接近 1.0 的值)
+    fig.update_yaxes(rangemode='tozero', tickformat=".2f")
     
     return fig

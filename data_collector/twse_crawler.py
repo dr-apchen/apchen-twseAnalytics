@@ -38,8 +38,7 @@ def fetch_twse_stock_list(save_path="data/tw_stock_list.csv"):
             if len(cols) >= 5:
                 stock = cols[0].text.split('　')
                 if stock[0].isdigit():
-                    stock_list.append({"stock_id": stock[0], "stock_name": stock[1], "stock_type": key})
-
+                    stock_list.append({"stock_id": stock[0], "stock_name": stock[1], "stock_industry": cols[4].text, "stock_type": key})
     df = pd.DataFrame(stock_list)
     df.to_csv(save_path, index=False, encoding="utf-8-sig")
     print(f"✅ 已更新台股中文名稱對照表，共 {len(df)} 檔股票")

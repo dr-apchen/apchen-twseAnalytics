@@ -13,19 +13,22 @@ import time
 from datetime import datetime, timedelta
 from analytics.trend_analysis import analyze_trend
 from analytics.indicators import calculate_all_indicators
-from utils.stock_info_map import get_stock_name
-from visualization.summary_table import build_summary_table
+from analytics.industry_analysis import IndustryAnalyzer
+from utils.stock_info_map import get_stock_name, get_all_industry, get_stock_ids_by_industry
+from visualization.summary_table import build_summary_table, render_performance_ranking_table
 from visualization.chart_utils import (
     plot_price_ma,
     plot_rsi,
     plot_macd,
     plot_bollinger_bands,
     plot_volume,
+    plot_industry_cumulative_return
 )
 from data_collector.data_updater import (
     fetch_and_store,
     check_stock_data_exists,
     load_stock_data,
+    check_stock_data_uptodate
 )
 from data_collector.hot_stock_fetcher import (
     merge_and_save_hot_stocks,
@@ -44,7 +47,7 @@ from visualization.chart_utils import plot_cumulative_returns_and_drawdown # 引
 
 logger = setup_logger("dashboard")
 
-def ensure_data_completeness(stock_id: str, start_date: str, end_date: str):
+def ensure_data_completeness(stock_id: str, start_date: str, end_date: str, flag: bool = False):
     """
     檢查資料是否完整，若缺少日期範圍內的最新資料則自動抓取補齊。
     
@@ -57,16 +60,19 @@ def ensure_data_completeness(stock_id: str, start_date: str, end_date: str):
         df (pd.Dataframe): 股價資料
     """
     # Step 1: 自動補抓缺資料
-    exists = check_stock_data_exists(stock_id, start_date, end_date)
+    with st.spinner(f"📥 確認資料庫中股票代碼 {stock_id} 資料是否完整..."):
+        exists = check_stock_data_exists(stock_id, start_date, end_date)
     if not exists:
         print(f"⚠️ 資料庫中無 {stock_id} 資料，自動抓取中...")
-        fetch_and_store(stock_id, start_date, end_date)
+        with st.spinner(f"📥 資料庫中無 {stock_id} 資料，自動抓取中..."):
+            updates = fetch_and_store(stock_id, start_date, end_date)
 
         # schedule.every().day.at("09:00").do(daily_task, stock_id=stock_id)
         # print(f"⏰ 已設定每日 9:00 自動抓取 {stock_id} 資料並更新技術指標")
 
     # Step 2: 讀取資料庫
-    df = load_stock_data(stock_id, start_date, end_date)
+    with st.spinner(f"⏳ 載入資料庫中 {stock_id} 資料..."):
+        df = load_stock_data(stock_id, start_date, end_date)
     
     if df.empty:
         st.error(f"❌ 抓取 {stock_id} 資料失敗，請檢查股票代碼或網路連線")
@@ -82,10 +88,16 @@ def ensure_data_completeness(stock_id: str, start_date: str, end_date: str):
         # 若資料未涵蓋至結束日期，則補抓缺口
         if latest_date_in_db < end_date:
             missing_start = latest_date_in_db + timedelta(days=1)
-            st.info(f"📥 發現 {stock_id} 資料缺少 {missing_start} 到 {end_date}，自動補抓中...")
-            fetch_and_store(stock_id, missing_start, end_date)
-            df = load_stock_data(stock_id, start_date, end_date)
-        
+            # placeholder = st.empty()
+            with st.spinner(f"📥 確認 {stock_id} (股票代碼) {missing_start} 到 {end_date} 期間資料..."):
+                updates = fetch_and_store(stock_id, missing_start, end_date)
+                df = load_stock_data(stock_id, start_date, end_date)
+                # if(updates is True):
+                #     placeholder.success(f"✅ {stock_id} 資料已更新")
+                # else:
+                #     placeholder.success(f"✅ {stock_id} 資料無更新")
+                # if(flag == True):
+                #     placeholder.empty()
     return df
 
 def run_dashboard():
@@ -104,13 +116,13 @@ def run_dashboard():
     
     # 取得使用者模式選擇
     st.sidebar.header("🔍 功能選單")
-    mode = st.sidebar.radio("選擇分析模式：", ["個股分析", "多股票摘要表"])        
+    mode = st.sidebar.radio("選擇分析模式：", ["個股分析", "多股票摘要表", "產業分析"])        
     # 共用日期範圍    
     col1, col2 = st.sidebar.columns(2)
     with col1:
         start_date = st.sidebar.date_input("📆 開始日期", datetime(2023, 1, 1))
     with col2:    
-        end_date = st.sidebar.date_input("📆 結束日期", datetime.today() - timedelta(days=1))
+        end_date = st.sidebar.date_input("📆 結束日期", datetime.today() - timedelta(days=2))
         
     # ================================
     # 模式一：個股分析
@@ -160,9 +172,15 @@ def run_dashboard():
             return
 
         stock_data_dict = {}
-        for stock_id in stock_ids:
+        stock_uptodate = check_stock_data_uptodate(stock_ids, start_date, end_date)
+        for index, stock_id in enumerate(stock_ids):
             stock_name = get_stock_name(stock_id)
-            df = ensure_data_completeness(stock_id, start_date, end_date)
+            if(stock_id in stock_uptodate):
+                with st.spinner(f"⏳ 載入資料庫中 {stock_id} 資料..."):
+                    df = load_stock_data(stock_id, start_date, end_date)
+            else:
+                df = ensure_data_completeness(stock_id, start_date, end_date)
+                
             if df.empty:
                 return
             
@@ -185,10 +203,104 @@ def run_dashboard():
         all_dates = [df[1]["trade_date"].max() for df in stock_data_dict.values()]
         latest_update = max(all_dates) if all_dates else "未知"
         st.caption(f"📅 資料更新至：{latest_update.strftime('%Y-%m-%d')}")
+    # ================================
+    # 模式三：產業分析頁面
+    # ================================
+    elif mode == "產業分析":
+        st.subheader("🏭 單一產業別市場分析")       
+        
+        # --- 1. 使用者輸入選單 ---
+        # 假設 get_all_industry_names() 從 DB 讀取所有產業名稱
+        all_industries = get_all_industry()
+        if "nan" in all_industries:
+            all_industries.remove("nan")
+        if len(all_industries) < 1:
+            st.error("❌ 無法取得產業別清單，請重新開啟頁面以確保台股產業資料已下載。")
+        else:
+            selected_industry = st.sidebar.selectbox(
+                "選擇產業別", [""] + [f"{i}" for i in all_industries]
+            )
+        
+            if selected_industry:
+                # --- 2. 數據載入與分析 ---
+                with st.spinner(f"📥 正在載入 {selected_industry} 的數據並進行分析..."):
+                    print(f"🔄 更新中: {selected_industry}")
+                    # A. 載入數據 (呼叫 data_loader)
+                    
+                    stock_ids = get_stock_ids_by_industry(selected_industry)
+                    stock_id_len = len(stock_ids)
+                    if not stock_ids:
+                        st.info("💡 請在左側選取一個產業別。")
+                        return
+                    
+                with st.spinner(f"📥 正在載入 {stock_id_len} 筆股票數據並進行分析..."):
+                    status_text = st.empty()
+                    percent_complete = 0
+                    my_progress_bar = st.progress(percent_complete, text="⏳ 資料載入中，請稍候...")
+                    percent_interval = 1/stock_id_len
+                    industry_stock_data = pd.DataFrame()
+                    stock_uptodate = check_stock_data_uptodate(stock_ids, start_date, end_date)
+                    for index, stock_id in enumerate(stock_ids):
+                        stock_name = get_stock_name(stock_id)
+                        if(stock_id in stock_uptodate):
+                            with st.spinner(f"⏳ 載入資料庫中 {stock_id} 資料..."):
+                                df = load_stock_data(stock_id, start_date, end_date)
+                        else:
+                            df = ensure_data_completeness(stock_id, start_date, end_date)
+                        # df = ensure_data_completeness(stock_id, start_date, end_date)
+                        if df.empty:
+                            return
                         
+                        if not df.empty:
+                            df["stock_name"] = stock_name
+                            df["industry"] = selected_industry
+                            industry_stock_data = pd.concat([industry_stock_data, df], ignore_index=True)
+                        percent_complete += percent_interval 
+                        my_progress_bar.progress(percent_complete, text=f"⏳ 資料載入中，進度 {(percent_complete*100):.0f}%...")
+            
+                    # status_text.text("🎉 產業別股價資料載入完成。")
+                    my_progress_bar.empty()
+                    
+                    if industry_stock_data.empty:
+                        st.error(f"❌ 在所選區間內，找不到 {selected_industry} 的股價數據。")
+                        return
+                    else: 
+                        # B. 進行分析 (呼叫 IndustryAnalyzer)
+                        data_with_returns = IndustryAnalyzer.calculate_industry_stock_returns(pd.DataFrame(industry_stock_data))
+                        industry_daily_perf = IndustryAnalyzer.aggregate_industry_performance(data_with_returns)
+                        stock_ranking_df = IndustryAnalyzer.calculate_stock_total_returns(industry_stock_data) 
+                        # C. 【新增】計算個股總報酬率
+                        stock_ranking_df = IndustryAnalyzer.calculate_stock_total_returns(industry_stock_data)
+                        # --- 3. 結果視覺化 ---
+                        st.markdown(f"📊 {selected_industry} 趨勢分析")
+                        
+                        # 繪製產業累積報酬率圖
+                        if data_with_returns.empty or industry_daily_perf.empty:
+                            st.error(f"❌ 無法計算 {selected_industry} 趨勢分析")
+                        else: 
+                            fig_cum_ret = plot_industry_cumulative_return(
+                                data_with_returns, 
+                                industry_daily_perf, 
+                                stock_ranking_df, # 排行榜數據
+                                n_highlight=5     # 可調整突顯的數量
+                            )
+                            st.plotly_chart(fig_cum_ret, use_container_width=True)
+                        st.markdown("---")
+        
+                        # 顯示個股報酬率排行榜 (呼叫 summary_table 模組)
+                        if not stock_ranking_df.empty:
+                            render_performance_ranking_table(
+                                stock_ranking_df,
+                                title=f"📈 {selected_industry} 產業內個股區間總報酬率排行榜({start_date} ~ {end_date})"
+                            )
+                        else:
+                            st.info("該區間內無有效的個股報酬率數據。")
+            else:
+                st.info("💡 請在左側選取一個產業別。")
+                
             
     st.sidebar.markdown("---")
-    st.sidebar.markdown("**版本**： Beta 1.0")
+    st.sidebar.markdown("**版本**： Beta 1.1")
             
 def generate_charts(df: pd.DataFrame, stock_name: str):
     """
@@ -255,8 +367,7 @@ def generate_charts(df: pd.DataFrame, stock_name: str):
     if df is not None:
         render_performance_metrics(df, stock_name)
     
-    
-    
+
 def hot_stock_fetcher() -> str:
     """
     熱門股清單載入
