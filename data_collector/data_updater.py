@@ -19,7 +19,7 @@ logger = setup_logger("data_updater")
 # ---------------------
 # 載入資料
 # ---------------------
-def load_stock_data(stock_id: str, start_date: str = None, end_date: str = None) -> pd.DataFrame:
+def load_stock_data(conn, stock_id: str, start_date: str = None, end_date: str = None) -> pd.DataFrame:
     """
     從資料庫讀取股價資料
     
@@ -31,8 +31,8 @@ def load_stock_data(stock_id: str, start_date: str = None, end_date: str = None)
     返回：
         df (pd.Dataframe): 股價資料
     """
-    conn = get_connection()
     if not conn:
+        raise ValueError("需要提供資料庫連接實例。")
         return pd.DataFrame()
 
     cursor = conn.cursor(dictionary=True)
@@ -46,7 +46,6 @@ def load_stock_data(stock_id: str, start_date: str = None, end_date: str = None)
     cursor.execute(query, tuple(params))
     rows = cursor.fetchall()
     cursor.close()
-    close_connection(conn)
 
     if not rows:
         print("⚠️ 無資料可分析")
@@ -61,7 +60,7 @@ def load_stock_data(stock_id: str, start_date: str = None, end_date: str = None)
 # ---------------------
 # 資料檢查(更新日期)
 # ---------------------
-def check_stock_data_uptodate(stock_ids: list[str], start_date: str = None, end_date: str = None) -> list[str]:
+def check_stock_data_uptodate(conn, stock_ids: list[str], start_date: str = None, end_date: str = None) -> list[str]:
     """
     確認目標股股價資料存在於資料庫
     
@@ -72,8 +71,8 @@ def check_stock_data_uptodate(stock_ids: list[str], start_date: str = None, end_
         count > 0 (bool)
     """
     
-    conn = get_connection()
     if not conn:
+        raise ValueError("需要提供資料庫連接實例。")
         return False
     cursor = conn.cursor()
     stock_uptodate = []
@@ -86,12 +85,11 @@ def check_stock_data_uptodate(stock_ids: list[str], start_date: str = None, end_
     cursor.execute(query)
     stock_uptodate = cursor.fetchall()
     cursor.close()
-    close_connection(conn)
     return stock_uptodate
 # ---------------------
 # 資料檢查
 # ---------------------
-def check_stock_data_exists(stock_id: str, start_date: str, end_date: str) -> bool:
+def check_stock_data_exists(conn, stock_id: str, start_date: str, end_date: str) -> bool:
     """
     確認目標股股價資料存在於資料庫
     
@@ -105,8 +103,8 @@ def check_stock_data_exists(stock_id: str, start_date: str, end_date: str) -> bo
     """
     
     print(f"🚀 確認 {stock_id} 股價資料筆數...")
-    conn = get_connection()
     if not conn:
+        raise ValueError("需要提供資料庫連接實例。")
         return False
     cursor = conn.cursor()
     query = """
@@ -116,13 +114,12 @@ def check_stock_data_exists(stock_id: str, start_date: str, end_date: str) -> bo
     cursor.execute(query, (stock_id, start_date, end_date))
     count = cursor.fetchone()[0]
     cursor.close()
-    close_connection(conn)
     return count > 0
 
 # ---------------------
 # 動態抓資料
 # ---------------------
-def fetch_and_store(stock_id: str, start_date: str, end_date: str) -> bool:
+def fetch_and_store(conn, stock_id: str, start_date: str, end_date: str) -> bool:
     """
     抓取資料並寫入資料庫，stock_name 可自動抓取
     
@@ -134,7 +131,9 @@ def fetch_and_store(stock_id: str, start_date: str, end_date: str) -> bool:
     返回：
         NA
     """
-    
+    if not conn:
+        raise ValueError("需要提供資料庫連接實例。")
+        return False
     stock_name = get_stock_name(stock_id)
     if stock_name != stock_id:  # 台股
         stock_type = get_stock_type(stock_id)
@@ -146,7 +145,7 @@ def fetch_and_store(stock_id: str, start_date: str, end_date: str) -> bool:
     data = fetch_stock_data(stock_id, start_date=start_date, end_date=end_date)
 
     if data:
-        insert_stock_price(data)
+        insert_stock_price(conn, data)
         print(f"✅ {stock_id} ({stock_name}) 股價資料寫入完成！")
         return True
     else:
@@ -253,7 +252,7 @@ def update_all_stocks(days_tolerance=1):
     print(f"\n📊 全部更新完成，共更新 {updated_count} 檔股票。")
 
 
-def load_foreign_net_buy(stock_ids: list[str], start_date: str, end_date: str) -> pd.DataFrame:
+def load_foreign_net_buy(conn, stock_ids: list[str], start_date: str, end_date: str) -> pd.DataFrame:
     """
     載入特定股票在指定區間的外資淨買賣超數據。
 
@@ -266,8 +265,9 @@ def load_foreign_net_buy(stock_ids: list[str], start_date: str, end_date: str) -
     Returns:
         pd.DataFrame: 包含 trade_date, foreign_net_shares 的數據。
     """
-    
-    conn = get_connection()
+    if not conn:
+        raise ValueError("需要提供資料庫連接實例。")
+        return False
     cursor = conn.cursor(dictionary=True)
     
     # 建立 stock_id 佔位符列表 (e.g., ['%s', '%s', '%s'])
@@ -293,6 +293,7 @@ def load_foreign_net_buy(stock_ids: list[str], start_date: str, end_date: str) -
     cursor.execute(query, params)
     result = cursor.fetchall()
     df = pd.DataFrame(result)
+    cursor.close()
     
     if df.empty:
         print(f"找不到 {stock_ids} 在 {start_date} 至 {end_date} 的外資交易數據。")
@@ -307,7 +308,7 @@ def load_foreign_net_buy(stock_ids: list[str], start_date: str, end_date: str) -
     #     print(f"載入外資淨買賣數據時發生錯誤 ({stock_ids}): {e}")
     #     return pd.DataFrame(columns=['trade_date', 'foreign_net_shares'])
 
-def load_daily_all_institutional_data(target_date: str, n: int = 50) -> pd.DataFrame:
+def load_daily_all_institutional_data(conn, target_date: str, n: int = 50) -> pd.DataFrame:
     """
     載入特定日期所有股票的外資淨買賣數據，並嘗試加入產業資訊。
     
@@ -318,8 +319,9 @@ def load_daily_all_institutional_data(target_date: str, n: int = 50) -> pd.DataF
     Returns:
         pd.DataFrame: 包含 stock_id, foreign_net_shares, industry 等欄位。
     """
-    
-    conn = get_connection()
+    if not conn:
+        raise ValueError("需要提供資料庫連接實例。")
+        return False
     cursor = conn.cursor(dictionary=True)
     
     query = """
@@ -344,6 +346,7 @@ def load_daily_all_institutional_data(target_date: str, n: int = 50) -> pd.DataF
     cursor.execute(query, params)
     result = cursor.fetchall()
     df = pd.DataFrame(result)
+    cursor.close()
     
     if df.empty:
         print(f"找不到在 {target_date} 的外資交易數據。")

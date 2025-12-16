@@ -518,3 +518,95 @@ def plot_foreign_cumulative_net_buy(
     fig.add_hline(y=0, line_dash="dash", line_color="grey")
     
     return fig
+def plot_industry_daily_metrics(
+    industry_daily_perf: pd.DataFrame, 
+    industry_name: str
+) -> go.Figure:
+    """
+    繪製產業每日平均漲跌幅和總成交量的雙軸圖表。
+    """
+    if industry_daily_perf.empty:
+        return go.Figure().update_layout(title="無數據可供繪製")
+        
+    fig = make_subplots(rows=2, cols=1, 
+                        shared_xaxes=True, 
+                        row_heights=[0.6, 0.4], # 上圖高，下圖低
+                        vertical_spacing=0.08) # 調整垂直間距
+
+    # A. 每日平均漲跌幅 (長條圖) - Row 1
+    fig.add_trace(
+        go.Bar(
+            x=industry_daily_perf['trade_date'],
+            y=industry_daily_perf['average_daily_return'],
+            name='平均漲跌幅',
+            marker_color=['#E74C3C' if r < 0 else '#2ECC71' for r in industry_daily_perf['average_daily_return']], # 鮮紅/鮮綠
+            hovertemplate='日期: %{x}<br>漲跌幅: %{y:.2%}<extra></extra>', # 顯示百分比格式
+            showlegend=True
+        ), row=1, col=1
+    )
+    
+    # B. 每日總成交量 (線圖或長條圖) - Row 2
+    fig.add_trace(
+        go.Scatter(
+            x=industry_daily_perf['trade_date'],
+            y=industry_daily_perf['total_volume'],
+            name='總成交量',
+            line=dict(color='#F39C12', width=2), # 橙色線
+            hovertemplate='日期: %{x}<br>成交量: %{y:,.0f} 股<extra></extra>',
+            showlegend=True
+        ), row=2, col=1
+    )
+
+    # 佈局設定開始
+    fig.update_layout(
+        # 主標題
+        title={
+            'text': f'{industry_name} 每日平均漲跌幅與總成交量趨勢',
+            'y':0.95, 'x':0.5, 'xanchor': 'center', 'yanchor': 'top'},
+            
+        # 總圖表設定
+        height=650, # 調整整體高度
+        hovermode="x unified", # 統一顯示 Hover 資訊
+        
+        # 圖例設定
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02, # 放在圖表上方
+            xanchor="left",
+            x=0
+        )
+    )
+
+    # 座標軸設定
+    
+    # Row 1 (平均漲跌幅) - Y 軸
+    fig.update_yaxes(
+        title_text="平均漲跌幅", 
+        row=1, col=1, 
+        tickformat=".2%", # Y 軸顯示為百分比
+        zeroline=True, 
+        zerolinecolor='lightgrey'
+    )
+    
+    # Row 2 (總成交量) - Y 軸
+    fig.update_yaxes(
+        title_text="總成交量 (股)", 
+        row=2, col=1, 
+        tickformat=",d" # 顯示千位分隔符
+    )
+    
+    # Row 2 (共用) - X 軸 (只需要在最底部顯示)
+    fig.update_xaxes(
+        title_text="日期",
+        row=2, col=1, 
+        rangeslider_visible=False # 可選：啟用或禁用日期範圍滑塊
+    )
+    
+    # 隱藏 Row 1 的 X 軸標籤 (因為是共用 X 軸)
+    fig.update_xaxes(
+        showticklabels=False, 
+        row=1, col=1
+    )
+    
+    return fig

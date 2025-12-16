@@ -44,7 +44,8 @@ class IndustryAnalyzer:
         daily_perf = data_with_returns.groupby('trade_date').agg(
             avg_return=('daily_return', 'mean'),  # 產業平均漲跌幅
             total_volume=('volume', 'sum'),       # 產業總成交量
-            stock_count=('stock_id', 'count')     # 產業內股票數量
+            stock_count=('stock_id', 'count'),    # 產業內股票數量
+            average_daily_return=('daily_return', 'mean') # 每日平均漲跌幅 (Daily Change Percentage)
         ).reset_index()
         
         # 計算成交量變化

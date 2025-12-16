@@ -1,8 +1,8 @@
 # analytics/investor_flow_analysis.py
 
 import pandas as pd
-from data_collector.data_updater import load_foreign_net_buy # 載入外資淨買賣數據
-from data_collector.data_updater import load_daily_all_institutional_data # 載入所有股票當日的法人數據，用於 Top N 排名
+from data_collector.data_updater import load_foreign_net_buy, load_daily_all_institutional_data 
+# 載入外資淨買賣數據 + 所有股票當日的法人數據，用於 Top N 排名
 import datetime
 
 class InvestorFlowAnalyzer:
@@ -24,6 +24,7 @@ class InvestorFlowAnalyzer:
 
     @staticmethod
     def get_top_n_net_buy_stocks(
+        conn,
         target_date: str, 
         n: int = 10 # 需要資料庫連接
     ) -> pd.DataFrame:
@@ -39,8 +40,10 @@ class InvestorFlowAnalyzer:
             pd.DataFrame: 包含 stock_id, foreign_net_shares, industry 的 Top N 列表。
         """
         
+        if not conn:
+            raise ValueError("需要提供資料庫連接實例。")
         # 1. 載入當日所有股票的法人淨買賣數據
-        top_n_df = load_daily_all_institutional_data(target_date, n)
+        top_n_df = load_daily_all_institutional_data(conn, target_date, n)
         # 這裡需要一個新的 data_loader 函式來載入所有股票的法人數據
         # 假設 load_daily_all_institutional_data(date, db_conn) 函式已存在
         # 並且能夠 join stock_info 獲取 industry 欄位
@@ -53,6 +56,7 @@ class InvestorFlowAnalyzer:
 
     @staticmethod
     def analyze_top_n_trends(
+        conn, 
         stock_ids: list[str], 
         start_date: str, 
         end_date: str # 需要資料庫連接
@@ -69,11 +73,13 @@ class InvestorFlowAnalyzer:
         Returns:
             pd.DataFrame: 用於繪製圖表的數據 (trade_date, stock_id, foreign_net_shares)。
         """
+        if not conn:
+            raise ValueError("需要提供資料庫連接實例。")
         if not stock_ids:
             return pd.DataFrame()
 
         # 批量載入這些股票在指定區間的外資淨買賣超數據
-        trend_data = load_foreign_net_buy(stock_ids, start_date, end_date)
+        trend_data = load_foreign_net_buy(conn, stock_ids, start_date, end_date)
         
         if trend_data.empty:
             print(f"找不到所選股票在 {start_date} 至 {end_date} 的外資交易趨勢數據。")

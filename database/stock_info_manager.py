@@ -5,11 +5,10 @@ database/stock_info_manager.py
 """
 
 from utils.helpers import setup_logger
-from database.db_connection import get_connection, close_connection
 
 logger = setup_logger("stock_info_manager")
 
-def ensure_stock_exists(stock_id: str, stock_name: str, stock_sector: str = "未知", stock_industry: str = "未知", market_type: str = "TWSE", listing_date: str = None):
+def ensure_stock_exists(conn, stock_id: str, stock_name: str, stock_sector: str = "未知", stock_industry: str = "未知", market_type: str = "TWSE", listing_date: str = None):
     """
     確保指定股票代號存在於 stock_info 表中
     若不存在，則自動插入一筆基本資料
@@ -26,10 +25,9 @@ def ensure_stock_exists(stock_id: str, stock_name: str, stock_sector: str = "未
         True
     """
     
-    conn = get_connection()
     if not conn:
+        raise ValueError("需要提供資料庫連接實例。")
         return False
-
     cursor = conn.cursor()
 
     # 檢查是否已存在
@@ -49,5 +47,4 @@ def ensure_stock_exists(stock_id: str, stock_name: str, stock_sector: str = "未
         print(f"ℹ️ 股票 {stock_id} 已存在於 stock_info")
 
     cursor.close()
-    close_connection(conn)
     return True

@@ -14,7 +14,7 @@ import pandas as pd
 
 logger = setup_logger("data_loder")
 
-def insert_stock_price(data):
+def insert_stock_price(conn, data):
     """
     將股價資料寫入 stock_price_daily
     每筆 dict 需包含：
@@ -26,6 +26,10 @@ def insert_stock_price(data):
     返回：
         df_summary (pd.Dataframe): 股價摘要
     """
+    if not conn:
+        raise ValueError("需要提供資料庫連接實例。")
+        return False
+
     if not data:
         print("⚠️ 無資料可寫入。")
         return
@@ -38,11 +42,7 @@ def insert_stock_price(data):
     stock_industry = get_stock_industry(stock_id)
 
     # 確保股票存在於 stock_info
-    ensure_stock_exists(stock_id, stock_name=stock_name, stock_industry=stock_industry, market_type=stock_type)
-
-    conn = get_connection()
-    if not conn:
-        return
+    ensure_stock_exists(conn, stock_id, stock_name=stock_name, stock_industry=stock_industry, market_type=stock_type)
 
     cursor = conn.cursor()
     insert_query = """
@@ -65,7 +65,6 @@ def insert_stock_price(data):
         conn.rollback()
     finally:
         cursor.close()
-        close_connection(conn)
 
 def save_institutional_data(data_df: pd.DataFrame):
     """

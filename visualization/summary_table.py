@@ -85,38 +85,61 @@ def render_performance_ranking_table(ranking_df: pd.DataFrame, title: str = ""):
         use_container_width=True
     )
     
-def render_generic_ranking_table(ranking_df: pd.DataFrame, title: str, metric_name: str):
+def render_generic_ranking_table(
+    ranking_df: pd.DataFrame, 
+    title: str, 
+    metric_name: str,
+    key_col: str = 'stock_id',        # 新增: 作為主要識別碼的欄位 (e.g., '代碼', '產業名稱')
+    metric_col: str = '排序指標值',   # 新增: 包含要格式化的數值的欄位
+    display_cols: list = None         # 新增: 最終要顯示的欄位列表
+):
     """
-    將通用的排行榜數據呈現為 Streamlit 表格。
+    將通用的排行榜數據呈現為 Streamlit 表格，並根據指標名稱自動格式化數值。
 
     Args:
-        ranking_df: 股票代碼、產業和排序指標值的 DataFrame。
-        title: 表格標題。
-        metric_name: 指標的中文名稱 (e.g., "漲跌幅", "成交量")。
+        ranking_df: 包含所有必要欄位的 DataFrame。
+        title: 表格標題 (通常是指標名稱)。
+        metric_name: 指標的中文名稱 ("百分比", "成交量", "股價")，決定格式化方式。
+        key_col: 作為主要識別碼的欄位名稱。
+        metric_col: 包含數值指標的欄位名稱。
+        display_cols: 最終要在表格中呈現的欄位順序。
     """
-    st.subheader(title)
+    if ranking_df.empty:
+        st.info(f"無 {title} 數據可供顯示。")
+        return
+
+    st.markdown(title)
     
     display_df = ranking_df.copy()
     
-    # 根據指標名稱進行格式化
-    if metric_name in ["漲跌幅", "總報酬率"]:
-        display_df['指標值'] = (display_df['排序指標值'] * 100).map('{:.2f}%'.format)
-    elif metric_name in ["成交量", "總成交量"]:
-        # 假設成交量是巨大的數字，用千位分隔符格式化
-        display_df['指標值'] = display_df['排序指標值'].map('{:,.0f}'.format)
+    # 1. 數值格式化
+    if metric_col in display_df.columns:
+        # 根據 metric_name 決定格式化方式
+        if metric_name in ["百分比", "漲跌幅", "累積報酬率"]:
+            # 適用於 daily_return, cumulative_return, average_daily_return (必須是小數)
+            display_df[metric_col] = (display_df[metric_col] * 100).map('{:.2f}%'.format)
+        
+        elif metric_name in ["成交量", "總成交量", "股數"]:
+            # 適用於 volume, total_volume, foreign_net_shares (大整數)
+            # 使用千位分隔符
+            display_df[metric_col] = display_df[metric_col].map('{:,.0f}'.format)
+        
+        elif metric_name in ["金額", "股價"]:
+            # 適用於 close_price 或其他貨幣/金額
+            display_df[metric_col] = display_df[metric_col].map('NT${:,.2f}'.format)
+    
+    # 2. 準備顯示欄位
+    
+    # 如果未指定 display_cols，則默認顯示所有欄位 (但通常建議明確指定)
+    if display_cols is None:
+        final_cols = display_df.columns.tolist()
     else:
-        display_df['指標值'] = display_df['排序指標值'].round(2)
-
-    # 重新命名和選擇欄位
-    display_df.rename(columns={
-        'stock_id': '股票代碼',
-        'industry': '產業別',
-    }, inplace=True)
-    
-    final_cols = ['股票代碼', '產業別', '指標值']
-    
+        # 確保指定的欄位都在 DataFrame 中
+        final_cols = [col for col in display_cols if col in display_df.columns]
+        
+    # 3. 呈現表格
     st.dataframe(
         display_df[final_cols],
         hide_index=True,
         use_container_width=True
-    )    
+    )
