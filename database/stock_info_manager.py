@@ -9,7 +9,7 @@ from database.db_connection import get_connection, close_connection
 
 logger = setup_logger("stock_info_manager")
 
-def ensure_stock_exists(stock_id: str, stock_name: str, industry: str = "未知", market_type: str = "TWSE", listing_date: str = None):
+def ensure_stock_exists(stock_id: str, stock_name: str, stock_sector: str = "未知", stock_industry: str = "未知", market_type: str = "TWSE", listing_date: str = None):
     """
     確保指定股票代號存在於 stock_info 表中
     若不存在，則自動插入一筆基本資料
@@ -17,7 +17,8 @@ def ensure_stock_exists(stock_id: str, stock_name: str, industry: str = "未知"
     參數：
         stock_id (str): : 股票代碼
         stock_name (str): 股票名稱
-        industry (str): 產業別
+        sector (str): 產業部門
+        industry (str): 行業
         market_type (str): 市場類型
         listing_date (str): 上市日期
     
@@ -38,10 +39,10 @@ def ensure_stock_exists(stock_id: str, stock_name: str, industry: str = "未知"
 
     if not exists:
         insert_query = """
-            INSERT INTO stock_info (stock_id, stock_name, industry, market_type, listing_date)
-            VALUES (%s, %s, %s, %s, %s)
+            INSERT INTO stock_info (stock_id, stock_name, sector, industry, market_type, listing_date)
+            VALUES (%s, %s, %s, %s, %s, %s)
         """
-        cursor.execute(insert_query, (stock_id, stock_name, industry, market_type, listing_date))
+        cursor.execute(insert_query, (stock_id, stock_name, stock_sector, stock_industry, market_type, listing_date))
         conn.commit()
         print(f"✅ 股票 {stock_id} ({stock_name}) 已新增至 stock_info")
     else:

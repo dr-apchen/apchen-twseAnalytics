@@ -10,25 +10,32 @@ visualization/dashboard.py
 import streamlit as st
 import pandas as pd
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from analytics.trend_analysis import analyze_trend
 from analytics.indicators import calculate_all_indicators
 from analytics.industry_analysis import IndustryAnalyzer
+from analytics.investor_flow_analysis import InvestorFlowAnalyzer
 from utils.stock_info_map import get_stock_name, get_all_industry, get_stock_ids_by_industry
-from visualization.summary_table import build_summary_table, render_performance_ranking_table
+from visualization.summary_table import (
+    build_summary_table, 
+    render_performance_ranking_table, 
+    render_generic_ranking_table
+)
 from visualization.chart_utils import (
     plot_price_ma,
     plot_rsi,
     plot_macd,
     plot_bollinger_bands,
     plot_volume,
-    plot_industry_cumulative_return
+    plot_industry_cumulative_return,
+    plot_foreign_net_buy_trend
 )
 from data_collector.data_updater import (
     fetch_and_store,
     check_stock_data_exists,
     load_stock_data,
-    check_stock_data_uptodate
+    check_stock_data_uptodate,
+    load_foreign_net_buy
 )
 from data_collector.hot_stock_fetcher import (
     merge_and_save_hot_stocks,
@@ -116,13 +123,15 @@ def run_dashboard():
     
     # 取得使用者模式選擇
     st.sidebar.header("🔍 功能選單")
-    mode = st.sidebar.radio("選擇分析模式：", ["個股分析", "多股票摘要表", "產業分析"])        
-    # 共用日期範圍    
-    col1, col2 = st.sidebar.columns(2)
-    with col1:
-        start_date = st.sidebar.date_input("📆 開始日期", datetime(2023, 1, 1))
-    with col2:    
-        end_date = st.sidebar.date_input("📆 結束日期", datetime.today() - timedelta(days=2))
+    mode = st.sidebar.radio("選擇分析模式：", ["個股分析", "多股票摘要表", "產業分析", "三大法人投資分析"])    
+    
+    if mode != "三大法人投資分析":
+        # 共用日期範圍    
+        col1, col2 = st.sidebar.columns(2)
+        with col1:
+            start_date = st.sidebar.date_input("📆 開始日期", datetime(2023, 1, 1))
+        with col2:    
+            end_date = st.sidebar.date_input("📆 結束日期", datetime.today() - timedelta(days=2))
         
     # ================================
     # 模式一：個股分析
@@ -298,6 +307,12 @@ def run_dashboard():
             else:
                 st.info("💡 請在左側選取一個產業別。")
                 
+    # ================================
+    # 模式四：三大法人分析頁面
+    # ================================
+    elif mode == "三大法人投資分析":
+        render_investor_flow_page()
+        # st.info("💡 ")
             
     st.sidebar.markdown("---")
     st.sidebar.markdown("**版本**： Beta 1.1")
@@ -486,8 +501,135 @@ def render_performance_metrics(stock_data_df: pd.DataFrame, stock_name: str):
     fig = plot_cumulative_returns_and_drawdown(prices, stock_name)
     st.plotly_chart(fig, use_container_width=True)
 
+def render_investor_flow_page():
+    st.subheader("🐋 外資買賣行為趨勢分析")
     
+    # --- 1. 使用者輸入區 ---
+    col1, col2, col3 = st.columns(3)
     
+    with col1:
+        # 選擇目標日期 (預設為昨日)
+        default_date = date.today() - timedelta(days=1)
+        target_date = st.sidebar.date_input("選擇分析日期", default_date)
+        target_date_str = target_date.strftime("%Y-%m-%d")
+        
+    with col2:
+        # 選擇 Top N 數量
+        top_n = st.sidebar.slider("顯示 Top N 股票", min_value=5, max_value=20, value=10, step=1)
+        
+    with col3:
+        # 選擇趨勢追蹤的期間 (例如：回溯 N 天)
+        lookback_days = st.sidebar.slider("趨勢追蹤期間 (天)", min_value=10, max_value=90, value=30, step=5)
+
+    # 執行 Top N 分析
+    with st.spinner(f"正在分析 {target_date_str} 的 Top {top_n} 外資淨買超股票..."):
+        # A. 獲取當日 Top N 排行榜
+        ranking_df = InvestorFlowAnalyzer.get_top_n_net_buy_stocks(
+            target_date_str, 
+            n=top_n
+        )
+    
+    if ranking_df.empty:
+        st.warning(f"找不到 {target_date_str} 的外資交易數據或資料庫連接有誤。")
+        return
+
+    # --- 2. Top N 排行榜 (表格呈現) ---
+    stock_ids_to_track = ranking_df['stock_id'].tolist()
+    
+    st.subheader(f"🏆 {target_date_str} 外資淨買超 Top {top_n} 排行榜")
+    
+    # 重用 summary_table.py 的通用排行榜呈現函式
+    # 需要在 ranking_df 中將 'foreign_net_shares' 欄位重命名為 '排序指標值'，以符合 render_generic_ranking_table 預期
+    ranking_df_display = ranking_df.rename(columns={'foreign_net_shares': '排序指標值'})
+    
+    render_generic_ranking_table(
+        ranking_df_display, 
+        title=f"外資淨買超股數 (股)", 
+        metric_name="成交量" # 使用成交量格式化，因為都是大數字
+    )
+    
+    st.markdown("---")
+    
+    # --- 3. 趨勢分析圖 ---
+    st.subheader(f"📈 Top {top_n} 股票外資淨買賣超 {lookback_days} 天趨勢")
+    
+    # B. 追蹤這些 Top N 股票的歷史趨勢
+    start_date = (target_date - timedelta(days=lookback_days)).strftime("%Y-%m-%d")
+    
+    with st.spinner(f"正在追蹤 Top {top_n} 股票從 {start_date} 至 {target_date_str} 的趨勢..."):
+        trend_df = InvestorFlowAnalyzer.analyze_top_n_trends(
+            stock_ids_to_track,
+            start_date,
+            target_date_str
+        )
+        
+    if not trend_df.empty:
+        # 繪製趨勢圖
+        fig_trend = plot_foreign_net_buy_trend(
+            trend_df, 
+            stock_ids_to_track,
+            title=f"外資淨買賣超趨勢 ({start_date} ~ {target_date_str})"
+        )
+        st.plotly_chart(fig_trend, use_container_width=True)
+        
+    else:
+        st.info("無法載入所選 Top N 股票的歷史趨勢數據。")
+        
+    # C. 額外增加單一股票累積買超趨勢 (選用，使用者點擊排行榜後展示)
+    st.markdown("---")
+    st.subheader("📊 單一股票外資累積淨買入趨勢分析")
+    
+    # 1. 讓使用者從 Top N 列表中選擇一檔股票
+    if stock_ids_to_track:
+        # 預設選擇第一檔 (外資淨買超最多的)
+        default_index = 0
+        
+        selected_stock = st.selectbox(
+            "選擇要分析累積趨勢的股票代碼",
+            options=stock_ids_to_track,
+            index=default_index,
+            key='single_stock_select'
+        )
+        
+        # 2. 載入該股票的歷史淨買入數據
+        # 這裡需要與趨勢圖相同的時間區間，或更長的區間 (例如：一年)
+        analysis_end_date = target_date_str
+        analysis_start_date = (target_date - timedelta(days=365)).strftime("%Y-%m-%d") 
+        
+        with st.spinner(f"正在載入 {selected_stock} 的歷史外資交易數據..."):
+            
+            # 從 data_loader 載入單一股票的歷史數據
+            
+            stock_net_buy_df = load_foreign_net_buy(
+                selected_stock,
+                analysis_start_date, # 使用更長的追蹤期 (例如：一年)
+                analysis_end_date
+            )
+        
+        # 3. 繪製累積趨勢圖
+        if not stock_net_buy_df.empty:
+            # 獲取 Series (只有 foreign_net_shares 欄位)
+            net_buy_series = stock_net_buy_df['foreign_net_shares'] 
+            
+            # 假設我們可以從某處獲取股票名稱 (這裡暫時只使用代碼)
+            stock_name = selected_stock 
+            
+            # 引入 chart_utils 中的累積趨勢繪圖函式
+            from visualization.chart_utils import plot_foreign_cumulative_net_buy
+            
+            fig_cumulative = plot_foreign_cumulative_net_buy(
+                net_buy_series, 
+                stock_name
+            )
+            st.plotly_chart(fig_cumulative, use_container_width=True)
+            
+            
+        else:
+            st.warning(f"找不到 {selected_stock} 從 {analysis_start_date} 以來的外資交易歷史數據。")
+            
+    else:
+        # 如果 Top N 排行榜是空的 (例如，當日無數據)
+        st.info("請先確認上方的 Top N 排行榜有數據。")
     
 if __name__ == "__main__":
     run_dashboard()       

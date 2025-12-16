@@ -1,6 +1,14 @@
-# analytics/industry_analysis.py (修改)
+"""
+analytics/industry_analysis.py
+-----------
+產生單一產業趨勢分析
+"""
 
+
+from utils.helpers import setup_logger
 import pandas as pd
+
+logger = setup_logger("industry_analysis")
 
 class IndustryAnalyzer:
     # 移除 load_data() 函式，改為直接接收數據

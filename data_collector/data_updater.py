@@ -77,10 +77,11 @@ def check_stock_data_uptodate(stock_ids: list[str], start_date: str = None, end_
         return False
     cursor = conn.cursor()
     stock_uptodate = []
-    query = "SELECT stock_id FROM stock_price_daily WHERE"
+    query = "SELECT stock_id FROM stock_price_daily WHERE stock_id IN ("
     for i in range(len(stock_ids)):
         print(f"🚀 確認 {stock_ids[i]} 股價資料筆數...")
-        query += (" OR" if i > 0 else "(") + " stock_id = " + stock_ids[i]
+        stock_id = "'" + stock_ids[i] + "'"
+        query += (", " if i > 0 else "") + stock_id
     query += ") AND updated_date >= CURDATE();"
     cursor.execute(query)
     stock_uptodate = cursor.fetchall()
@@ -134,8 +135,8 @@ def fetch_and_store(stock_id: str, start_date: str, end_date: str) -> bool:
         NA
     """
     
-    if stock_id.isdigit() and len(stock_id) == 4:  # 台股
-        stock_name = get_stock_name(stock_id)
+    stock_name = get_stock_name(stock_id)
+    if stock_name != stock_id:  # 台股
         stock_type = get_stock_type(stock_id)
         stock_id = f"{stock_id}.{stock_type}"
     else:
@@ -251,3 +252,108 @@ def update_all_stocks(days_tolerance=1):
     conn.close()
     print(f"\n📊 全部更新完成，共更新 {updated_count} 檔股票。")
 
+
+def load_foreign_net_buy(stock_ids: list[str], start_date: str, end_date: str) -> pd.DataFrame:
+    """
+    載入特定股票在指定區間的外資淨買賣超數據。
+
+    Args:
+        stock_ids (list[str]): 股票代碼。
+        start_date (str): 查詢起始日期 (YYYY-MM-DD)。
+        end_date (str): 查詢結束日期 (YYYY-MM-DD)。
+        db_conn (DBConnection): 資料庫連接實例。
+
+    Returns:
+        pd.DataFrame: 包含 trade_date, foreign_net_shares 的數據。
+    """
+    
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    # 建立 stock_id 佔位符列表 (e.g., ['%s', '%s', '%s'])
+    stock_id_placeholders = ', '.join(['%s'] * len(stock_ids))
+    # 組合參數：stock_ids 的參數 (元組) 加上日期的參數
+    params = tuple(stock_ids) + (start_date, end_date)
+    
+    # SQL 查詢語句
+    query = f"""
+    SELECT 
+        trade_date,
+        stock_id,
+        foreign_net_shares
+    FROM 
+        institutional_trades
+    WHERE 
+        stock_id IN ({stock_id_placeholders}) AND 
+        trade_date BETWEEN %s AND %s
+    ORDER BY 
+        trade_date ASC, stock_id ASC;
+    """
+    # try:
+    cursor.execute(query, params)
+    result = cursor.fetchall()
+    df = pd.DataFrame(result)
+    
+    if df.empty:
+        print(f"找不到 {stock_ids} 在 {start_date} 至 {end_date} 的外資交易數據。")
+        return pd.DataFrame(columns=['trade_date', 'foreign_net_shares'])
+        
+    # 確保日期是 datetime 格式，並設為索引（有利於時間序列分析）
+    df['trade_date'] = pd.to_datetime(df['trade_date'])
+    
+    return df
+        
+    # except Exception as e:
+    #     print(f"載入外資淨買賣數據時發生錯誤 ({stock_ids}): {e}")
+    #     return pd.DataFrame(columns=['trade_date', 'foreign_net_shares'])
+
+def load_daily_all_institutional_data(target_date: str, n: int = 50) -> pd.DataFrame:
+    """
+    載入特定日期所有股票的外資淨買賣數據，並嘗試加入產業資訊。
+    
+    Args:
+        target_date (str): 查詢日期 (YYYY-MM-DD)。
+        db_conn: 資料庫連接實例。
+        
+    Returns:
+        pd.DataFrame: 包含 stock_id, foreign_net_shares, industry 等欄位。
+    """
+    
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    query = """
+    SELECT 
+        it.trade_date,
+        it.stock_id, 
+        it.foreign_net_shares,
+        si.industry
+    FROM 
+        institutional_trades it
+    LEFT JOIN 
+        stock_info si ON it.stock_id = si.stock_id
+    WHERE 
+        it.trade_date = %s
+    ORDER BY 
+        it.foreign_net_shares DESC
+    LIMIT %s;
+    """
+    params = (target_date,n)
+    
+    # try:
+    cursor.execute(query, params)
+    result = cursor.fetchall()
+    df = pd.DataFrame(result)
+    
+    if df.empty:
+        print(f"找不到在 {target_date} 的外資交易數據。")
+        return pd.DataFrame(columns=['trade_date', 'foreign_net_shares'])
+        
+    # 確保日期是 datetime 格式，並設為索引（有利於時間序列分析）
+    df['trade_date'] = pd.to_datetime(df['trade_date'])
+    
+    return df
+    
+    # except Exception as e:
+    #     print(f"載入外資淨買賣數據時發生錯誤 ({target_date}): {e}")
+    #     return pd.DataFrame(columns=['trade_date', 'foreign_net_shares'])

@@ -7,6 +7,7 @@ visualization/chart_utils.py
 
 from utils.helpers import setup_logger
 from plotly.subplots import make_subplots
+from analytics.investor_flow_analysis import InvestorFlowAnalyzer
 import plotly.graph_objects as go
 import pandas as pd
 import random
@@ -408,5 +409,112 @@ def plot_industry_cumulative_return(
     )
     # 將 Y 軸起始點設為 1.0 (或接近 1.0 的值)
     fig.update_yaxes(rangemode='tozero', tickformat=".2f")
+    
+    return fig
+
+def plot_foreign_net_buy_trend(
+    trend_df: pd.DataFrame, 
+    stock_ids: list[str], 
+    title: str
+) -> go.Figure:
+    """
+    繪製多檔股票的外資每日淨買入股數趨勢圖。
+
+    Args:
+        trend_df (pd.DataFrame): 包含 trade_date, stock_id, foreign_net_shares 的數據。
+        stock_ids (list[str]): 實際繪製的股票代碼列表 (用於圖例)。
+        title (str): 圖表標題。
+
+    Returns:
+        go.Figure: Plotly 圖表物件。
+    """
+    if trend_df.empty:
+        return go.Figure().update_layout(title="無數據可供繪製")
+        
+    fig = go.Figure()
+    
+    # 將數據 pivot 成每個股票代碼一列，日期為索引
+    pivot_df = trend_df.pivot_table(
+        index='trade_date', 
+        columns='stock_id', 
+        values='foreign_net_shares'
+    ).fillna(0) # 缺失值補 0
+
+    colors = [
+        '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', 
+        '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'
+    ] * (len(stock_ids) // 10 + 1) # 循環使用顏色
+    
+    for i, stock_id in enumerate(stock_ids):
+        if stock_id in pivot_df.columns:
+            fig.add_trace(
+                go.Scatter(
+                    x=pivot_df.index,
+                    y=pivot_df[stock_id],
+                    mode='lines+markers', # 點和線
+                    name=stock_id,
+                    line=dict(color=colors[i]),
+                    hovertemplate='日期: %{x}<br>淨買入: %{y:,.0f} 股<extra></extra>'
+                )
+            )
+
+    fig.update_layout(
+        title={
+            'text': title,
+            'y':0.95, 'x':0.5, 'xanchor': 'center', 'yanchor': 'top'},
+        xaxis_title="日期",
+        yaxis_title="外資淨買入股數",
+        hovermode="x unified",
+        legend_title="股票代碼",
+        height=600
+    )
+    # 增加零線，方便觀察淨買賣的界線
+    fig.add_hline(y=0, line_dash="dash", line_color="grey")
+    
+    return fig
+
+def plot_foreign_cumulative_net_buy(
+    net_buy_series: pd.Series, 
+    stock_name: str
+) -> go.Figure:
+    """
+    繪製單一股票的外資累積淨買入股數趨勢圖。
+    
+    Args:
+        net_buy_series (pd.Series): 帶有日期索引的外資每日淨買入股數序列。
+        stock_name (str): 股票名稱或代碼。
+        
+    Returns:
+        go.Figure: Plotly 圖表物件。
+    """
+    if net_buy_series.empty:
+        return go.Figure().update_layout(title="無數據可供繪製")
+
+    cumulative_net_buy = InvestorFlowAnalyzer.calculate_cumulative_net_buy(net_buy_series)
+
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scatter(
+            x=cumulative_net_buy.index,
+            y=cumulative_net_buy.values,
+            mode='lines',
+            name=f'{stock_name} 累積淨買入',
+            line=dict(color='purple', width=2),
+            fill='tozeroy', # 填充到 Y=0，更直觀
+            fillcolor='rgba(128,0,128,0.2)' if cumulative_net_buy.iloc[-1] > 0 else 'rgba(255,0,0,0.2)', # 根據最終值決定填充顏色
+            hovertemplate='日期: %{x}<br>累積淨買入: %{y:,.0f} 股<extra></extra>'
+        )
+    )
+
+    fig.update_layout(
+        title={
+            'text': f'{stock_name} 外資累積淨買入趨勢',
+            'y':0.95, 'x':0.5, 'xanchor': 'center', 'yanchor': 'top'},
+        xaxis_title="日期",
+        yaxis_title="累積淨買入股數",
+        hovermode="x unified",
+        height=500
+    )
+    fig.add_hline(y=0, line_dash="dash", line_color="grey")
     
     return fig

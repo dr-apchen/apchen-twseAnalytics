@@ -84,3 +84,39 @@ def render_performance_ranking_table(ranking_df: pd.DataFrame, title: str = ""):
         hide_index=True,
         use_container_width=True
     )
+    
+def render_generic_ranking_table(ranking_df: pd.DataFrame, title: str, metric_name: str):
+    """
+    將通用的排行榜數據呈現為 Streamlit 表格。
+
+    Args:
+        ranking_df: 股票代碼、產業和排序指標值的 DataFrame。
+        title: 表格標題。
+        metric_name: 指標的中文名稱 (e.g., "漲跌幅", "成交量")。
+    """
+    st.subheader(title)
+    
+    display_df = ranking_df.copy()
+    
+    # 根據指標名稱進行格式化
+    if metric_name in ["漲跌幅", "總報酬率"]:
+        display_df['指標值'] = (display_df['排序指標值'] * 100).map('{:.2f}%'.format)
+    elif metric_name in ["成交量", "總成交量"]:
+        # 假設成交量是巨大的數字，用千位分隔符格式化
+        display_df['指標值'] = display_df['排序指標值'].map('{:,.0f}'.format)
+    else:
+        display_df['指標值'] = display_df['排序指標值'].round(2)
+
+    # 重新命名和選擇欄位
+    display_df.rename(columns={
+        'stock_id': '股票代碼',
+        'industry': '產業別',
+    }, inplace=True)
+    
+    final_cols = ['股票代碼', '產業別', '指標值']
+    
+    st.dataframe(
+        display_df[final_cols],
+        hide_index=True,
+        use_container_width=True
+    )    
