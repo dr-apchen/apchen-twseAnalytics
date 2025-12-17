@@ -13,7 +13,6 @@ data_collector/hot_stock_fetcher.py
     - Market    : TWSE 或 TPEx
     - UpdateTime: 快取建立時間（字串）
 """
-
 from utils.helpers import setup_logger
 import os
 from datetime import datetime

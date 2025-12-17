@@ -3,7 +3,6 @@ data_collector/yahoo_api.py
 ---------------
 使用 yfinance 取得股票資料
 """
-
 from utils.helpers import setup_logger
 import yfinance as yf
 
