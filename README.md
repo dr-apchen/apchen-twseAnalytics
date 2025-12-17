@@ -97,6 +97,7 @@ twseAnalytics/
 ### 簡報介紹
 <br/>
 1. Beta 1.0
+<br/>
 <a href="https://reurl.cc/xKEkm5" target="_blank">
 <img width="250" height="250" alt="qrcode" src="https://github.com/user-attachments/assets/2c04e7ca-ab46-4be4-b7ec-14dd5b9cbdf6" />
 </a>
