@@ -1,6 +1,6 @@
 """
 data_collector/institutional_investor_fetcher.py
-
+----------------
 功能：
     - 取得台股三大法人買賣清單（包含 TWSE 上市 與 TPEx 上櫃）
     - 若網路或解析失敗，會自動載入本地快取 data/institutional_investor.csv
@@ -17,9 +17,6 @@ data_collector/institutional_investor_fetcher.py
     - 'dealer_sell_shares': 自營商賣出股數
     
 """
-
-# data_collector/institutional_investor_fetcher.py
-
 from utils.helpers import setup_logger
 import os
 import requests

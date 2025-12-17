@@ -6,8 +6,8 @@ visualization/dashboard.py
 此模組整合股價分析視覺化、技術指標圖表顯示，
 並新增「熱門股票清單」功能，供使用者快速選取熱門標的進行分析。
 """
-
 import streamlit as st
+from streamlit.components.v1 import html
 import pandas as pd
 import time
 from datetime import datetime, timedelta, date
@@ -180,41 +180,51 @@ def run_dashboard():
         if not stock_ids or len(stock_ids) <= 1:
             st.info("💡 請在左側輸入至少兩個股票代號。")
             return
-
+            
         stock_data_dict = {}
         conn = get_connection()
         stock_uptodate = check_stock_data_uptodate(conn, stock_ids, start_date, end_date)
-        for index, stock_id in enumerate(stock_ids):
-            stock_name = get_stock_name(stock_id)
-            if(stock_id in stock_uptodate):
-                with st.spinner(f"⏳ 載入資料庫中 {stock_id} 資料..."):
-                    df = load_stock_data(conn, stock_id, start_date, end_date)
-            else:
-                df = ensure_data_completeness(conn, stock_id, start_date, end_date)
+        
+        st.subheader("📋 個股技術分析報告")
+        st.session_state.tab_options = [f"🔍 {stock_ids[i]}" for i in range(len(stock_ids))]
+        tabs = st.tabs(st.session_state.tab_options)
+        with st.spinner("📥 正在載入個股數據分析及摘要..."):
+            for index, stock_id in enumerate(stock_ids):
+                stock_name = get_stock_name(stock_id)
+                if(stock_id in stock_uptodate):
+                    with st.spinner(f"⏳ 載入資料庫中 {stock_id} 資料..."):
+                        df = load_stock_data(conn, stock_id, start_date, end_date)
+                else:
+                    df = ensure_data_completeness(conn, stock_id, start_date, end_date)
+                    
+                if df.empty:
+                    return
                 
-            if df.empty:
+                if not df.empty:
+                    st.session_state.tab_options[index] = stock_name
+                    with tabs[index]:
+                        df = calculate_all_indicators(df)
+                        stock_data_dict[stock_id] = (stock_name, df)
+                        generate_charts(df, stock_name)                    
+    
+            close_connection(conn)
+            if not stock_data_dict:
+                st.error("❌ 無法取得任何股票資料，請確認代號是否正確。")
                 return
+            else:
+                # -------------------------
+                # 顯示多股票技術指標摘要表
+                # -------------------------
+                st.subheader("📊 多股票技術指標摘要表")
+                build_summary_table(stock_data_dict)
+                # if st.sidebar.button("觀看多股票技術指標摘要表"):
+                #     scroll_to_summary_btn()
+                
+            # 自動偵測資料最新日期
+            all_dates = [df[1]["trade_date"].max() for df in stock_data_dict.values()]
+            latest_update = max(all_dates) if all_dates else "未知"
+            st.caption(f"📅 資料更新至：{latest_update.strftime('%Y-%m-%d')}")
             
-            if not df.empty:
-                df = calculate_all_indicators(df)
-                stock_data_dict[stock_id] = (stock_name, df)
-                generate_charts(df, stock_name)                    
-
-        close_connection(conn)
-        if not stock_data_dict:
-            st.error("❌ 無法取得任何股票資料，請確認代號是否正確。")
-            return
-        else:
-            # -------------------------
-            # 顯示多股票技術指標摘要表
-            # -------------------------
-            st.markdown("## 📊 多股票技術指標摘要表")
-            build_summary_table(stock_data_dict)
-            
-        # 自動偵測資料最新日期
-        all_dates = [df[1]["trade_date"].max() for df in stock_data_dict.values()]
-        latest_update = max(all_dates) if all_dates else "未知"
-        st.caption(f"📅 資料更新至：{latest_update.strftime('%Y-%m-%d')}")
     # ================================
     # 模式三：產業分析頁面
     # ================================
@@ -324,6 +334,22 @@ def run_dashboard():
             
     st.sidebar.markdown("---")
     st.sidebar.markdown("**版本**： Beta 1.1")
+
+
+
+def scroll_to_summary_btn():
+    js_script = """
+    <script>
+        function scrollToSummary() {
+            var target = window.parent.document.getElementById("summary-anchor");
+            if (target) {
+                target.scrollIntoView({behavior: "smooth"});
+            }
+        }
+        scrollToBottom();
+    </script>
+    """
+    html(js_script, height=0)
             
 def generate_charts(df: pd.DataFrame, stock_name: str):
     """
@@ -342,9 +368,9 @@ def generate_charts(df: pd.DataFrame, stock_name: str):
     # -------------------------
     trend_messages = analyze_trend(df)
     if trend_messages:
-        st.markdown(f"### 🔔 {stock_name} 趨勢分析解讀")
-        for msg in trend_messages:
-            st.info(msg)
+        with st.expander(f"🔔 {stock_name} 趨勢分析解讀", expanded=False):
+            for msg in trend_messages:
+                st.info(msg)
 
     # 個股圖表展示
     # -------------------------
@@ -410,7 +436,7 @@ def hot_stock_fetcher() -> str:
     if not hot_df.empty:
         hot_df = hot_df.head(LIMIT_NUM)
         stock_hot = st.sidebar.selectbox(
-            "選擇熱門股票", [""] + [f"{r.StockName}（{r.StockID}）" for _, r in hot_df.iterrows()]
+            "🔥 選擇熱門股票", [""] + [f"{r.StockName}（{r.StockID}）" for _, r in hot_df.iterrows()]
         )
         if stock_hot:
             stock_id = stock_hot.split("（")[1].replace("）", "")
@@ -467,47 +493,44 @@ def hot_stock_fetcher_update(limit: int = 10):
     
 def render_performance_metrics(stock_data_df: pd.DataFrame, stock_name: str):
     
-    st.subheader(f"🔔 {stock_name} 績效與風險統計")
-    
-    # 取得收盤價序列
-    prices = stock_data_df['close_price']
-    
-    # 計算日報酬率
-    returns = prices.pct_change().dropna()
-
-    # --- 1. 計算所有指標 ---
-    try:
-        ann_return = calculate_annualized_return(returns)
-        max_drawdown = calculate_max_drawdown(prices)
-        volatility = calculate_annualized_volatility(returns)
+    with st.expander(f"🔔 {stock_name} 績效與風險統計", expanded=False):
+        # 取得收盤價序列
+        prices = stock_data_df['close_price']
         
-        # 為了計算夏普比率，假設無風險利率為 2% (0.02)
-        risk_free_rate = 0.02
-        sharpe_ratio = (ann_return - risk_free_rate) / volatility if volatility != 0 else 0
-
-    except Exception as e:
-        st.error(f"計算績效指標時發生錯誤: {e}")
-        return
-
-    # --- 2. 視覺化：數值摘要卡片 ---
-    col1, col2, col3, col4 = st.columns(4)
+        # 計算日報酬率
+        returns = prices.pct_change().dropna()
     
-    with col1:
-        st.metric("年化報酬率", f"{ann_return:.2%}", help="代表資產每年平均回報")
-    with col2:
-        # 最大回撤通常為負值，但顯示時習慣用正值
-        st.metric("最大回撤 (MDD)", f"{abs(max_drawdown):.2%}", help="從高點到低點的最大跌幅")
-    with col3:
-        st.metric("年化波動率", f"{volatility:.2%}", help="衡量價格波動風險")
-    with col4:
-        st.metric("夏普比率", f"{sharpe_ratio:.2f}", help="每承擔一單位風險所獲得的超額報酬")
-
-    st.markdown("---")
+        # --- 1. 計算所有指標 ---
+        try:
+            ann_return = calculate_annualized_return(returns)
+            max_drawdown = calculate_max_drawdown(prices)
+            volatility = calculate_annualized_volatility(returns)
+            
+            # 為了計算夏普比率，假設無風險利率為 2% (0.02)
+            risk_free_rate = 0.02
+            sharpe_ratio = (ann_return - risk_free_rate) / volatility if volatility != 0 else 0
+    
+        except Exception as e:
+            st.error(f"計算績效指標時發生錯誤: {e}")
+            return
+    
+        # --- 2. 視覺化：數值摘要卡片 ---
+        col1, col2, col3, col4 = st.columns(4)
+        
+        with col1:
+            st.metric("年化報酬率", f"{ann_return:.2%}", help="代表資產每年平均回報")
+        with col2:
+            # 最大回撤通常為負值，但顯示時習慣用正值
+            st.metric("最大回撤 (MDD)", f"{abs(max_drawdown):.2%}", help="從高點到低點的最大跌幅")
+        with col3:
+            st.metric("年化波動率", f"{volatility:.2%}", help="衡量價格波動風險")
+        with col4:
+            st.metric("夏普比率", f"{sharpe_ratio:.2f}", help="每承擔一單位風險所獲得的超額報酬")
     
     # --- 3. 視覺化：累積報酬率圖表 ---
-    st.subheader(f"🔔 {stock_name} 累積報酬與回撤趨勢")
-    fig = plot_cumulative_returns_and_drawdown(prices, stock_name)
-    st.plotly_chart(fig, use_container_width=True)
+    with st.expander(f"📊 {stock_name} 累積報酬與回撤趨勢", expanded=False):
+        fig = plot_cumulative_returns_and_drawdown(prices, stock_name)
+        st.plotly_chart(fig, use_container_width=True)
 
 def render_investor_flow_page():
     st.subheader("🐋 外資買賣行為趨勢分析")
@@ -614,15 +637,15 @@ def render_investor_flow_page():
         # 這裡需要與趨勢圖相同的時間區間，或更長的區間 (例如：一年)
         analysis_end_date = target_date_str
         analysis_start_date = (target_date - timedelta(days=365)).strftime("%Y-%m-%d") 
-        
         conn = get_connection()
         with st.spinner(f"正在載入 {selected_stock} 的歷史外資交易數據..."):
             
             # 從 data_loader 載入單一股票的歷史數據
             
+            selected_stock_list = [selected_stock]
             stock_net_buy_df = load_foreign_net_buy(
                 conn,
-                selected_stock,
+                selected_stock_list,
                 analysis_start_date, # 使用更長的追蹤期 (例如：一年)
                 analysis_end_date
             )

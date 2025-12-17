@@ -4,13 +4,11 @@ data_collector/scheduler.py
 每日自動排程抓取股價資料
 使用 schedule 套件
 """
-
 from utils.helpers import setup_logger
 import schedule
 import time
 from data_collector.data_updater import update_all_stocks
 from data_collector.institutional_investor_fetcher import InstitutionalFetcher
-import pandas as pd
 logger = setup_logger("scheduler")
 
 def job():

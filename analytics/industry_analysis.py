@@ -1,10 +1,9 @@
 """
 analytics/industry_analysis.py
------------
-產生單一產業趨勢分析
+----------------
+包含 IndustryAnalyzer 類別。負責特定產業的歷史數據聚合，例如計算產業的平均收盤價、總成交量等時間序列數據。
+
 """
-
-
 from utils.helpers import setup_logger
 import pandas as pd
 

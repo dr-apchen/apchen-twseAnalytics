@@ -4,7 +4,6 @@ visualization/summary_table.py
 建立多股票技術指標摘要表格。
 整合各股票分析結果供 dashboard 顯示。
 """
-
 from utils.helpers import setup_logger
 import streamlit as st
 import pandas as pd
@@ -25,6 +24,7 @@ def build_summary_table(stock_data_dict: dict) -> pd.DataFrame:
     返回型別：
         pd.Dataframe
     """
+    # st.markdown("<div id='summary-anchor'></div>", unsafe_allow_html=True)
     df_summary = generate_summary_table(stock_data_dict)
     st.dataframe(
         df_summary["summary"].style.highlight_max(
@@ -34,6 +34,7 @@ def build_summary_table(stock_data_dict: dict) -> pd.DataFrame:
         ),
         use_container_width=True
     )           
+    st.subheader("🔔 多股票績效與風險摘要表")
     st.dataframe(
         df_summary["performance"].style.highlight_max(
             subset=["年化報酬率"], color="#c1e1c1"

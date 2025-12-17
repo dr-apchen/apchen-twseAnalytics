@@ -4,13 +4,11 @@ visualization/chart_utils.py
 建立多股票技術技術指標繪圖功能，
 包含 MA、RSI、MACD、BB、VOL。
 """
-
 from utils.helpers import setup_logger
 from plotly.subplots import make_subplots
 from analytics.investor_flow_analysis import InvestorFlowAnalyzer
 import plotly.graph_objects as go
 import pandas as pd
-import random
 
 logger = setup_logger("chart_utils")
 
@@ -404,7 +402,15 @@ def plot_industry_cumulative_return(
             yanchor="top",
             y=1,
             xanchor="left",
-            x=1
+            x=1,
+            font=dict(
+                size=16, # Legend entries font size
+            ),
+            title=dict(
+                font=dict(
+                    size=16, # Legend title font size
+                )
+            )
         )
     )
     # 將 Y 軸起始點設為 1.0 (或接近 1.0 的值)
@@ -466,7 +472,17 @@ def plot_foreign_net_buy_trend(
         yaxis_title="外資淨買入股數",
         hovermode="x unified",
         legend_title="股票代碼",
-        height=600
+        height=600,
+        legend=dict(
+            font=dict(
+                size=16, # Legend entries font size
+            ),
+            title=dict(
+                font=dict(
+                    size=16, # Legend title font size
+                )
+            )
+        )
     )
     # 增加零線，方便觀察淨買賣的界線
     fig.add_hline(y=0, line_dash="dash", line_color="grey")

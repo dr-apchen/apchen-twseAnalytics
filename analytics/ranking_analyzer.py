@@ -1,7 +1,14 @@
-# analytics/ranking_analyzer.py
+"""
+analytics/ranking_analyzer.py
+-----------
+包含 RankingAnalyzer 類別。專注於 個股和產業的 Top N 排行榜計算。這是我們修改計算邏輯的檔案，將複雜的 daily_return 聚合計算（如累積報酬率）移至 Pandas 處理。
 
+"""
+from utils.helpers import setup_logger
 import pandas as pd
 import datetime
+
+logger = setup_logger("ranking_analyzer")
 
 class RankingAnalyzer:
     

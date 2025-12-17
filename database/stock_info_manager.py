@@ -3,7 +3,6 @@ database/stock_info_manager.py
 -----------
 處理 stock_info 表的管理邏輯
 """
-
 from utils.helpers import setup_logger
 
 logger = setup_logger("stock_info_manager")

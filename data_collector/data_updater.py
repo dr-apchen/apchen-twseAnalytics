@@ -5,9 +5,8 @@ data_collector/data_updater.py
 則自動從 Yahoo Finance 補抓並寫入 MySQL。
 同時確保台股清單存在。
 """
-
 from utils.helpers import setup_logger
-from datetime import datetime, date, timedelta
+from datetime import date, timedelta
 from database.db_connection import get_connection, close_connection
 from data_collector.yahoo_api import fetch_stock_data, fetch_stock_name
 from database.data_loader import insert_stock_price
@@ -204,7 +203,7 @@ def update_stock_if_needed(stock_id, stock_name, start_date=None, end_date=None,
     if not latest_date or (today - latest_date).days > days_tolerance:
         print(f"🔄 更新中: {stock_id} {stock_name} (最後資料: {latest_date})")
         start_date = latest_date + timedelta(days=1) if latest_date else today - timedelta(days=365)
-        fetch_and_store(stock_id, start_date, end_date or today)
+        fetch_and_store(conn, stock_id, start_date, end_date or today)
         updated = True
     else:
         print(f"✅ {stock_id} {stock_name} 資料已是最新 ({latest_date})")
@@ -242,7 +241,7 @@ def update_all_stocks(days_tolerance=1):
         if not latest_date or (today - latest_date).days > days_tolerance:
             print(f"🔄 更新中: {stock_id} {stock_name} (最後資料: {latest_date})")
             start_date = latest_date + timedelta(days=1) if latest_date else today - timedelta(days=365)
-            fetch_and_store(stock_id, start_date, today)
+            fetch_and_store(conn, stock_id, start_date, today)
             updated_count += 1
         else:
             print(f"✅ {stock_id} {stock_name} 資料已是最新 ({latest_date})")

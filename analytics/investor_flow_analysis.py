@@ -1,9 +1,16 @@
-# analytics/investor_flow_analysis.py
+"""
+analytics/investor_flow_analysis.py
 
+功能： 包含 InvestorFlowAnalyzer 類別。專注於外資、投信等法人交易數據的分析和淨買賣超排名。
+    
+"""
+from utils.helpers import setup_logger
 import pandas as pd
 from data_collector.data_updater import load_foreign_net_buy, load_daily_all_institutional_data 
 # 載入外資淨買賣數據 + 所有股票當日的法人數據，用於 Top N 排名
 import datetime
+
+logger = setup_logger("investor_flow_analysis")
 
 class InvestorFlowAnalyzer:
     

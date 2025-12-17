@@ -3,7 +3,6 @@ data_collector/twse_crawler.py
 ---------------
 爬取台股上市/上櫃股票基本資訊並匯出成CSV檔
 """
-
 from utils.helpers import setup_logger
 import pandas as pd
 import requests

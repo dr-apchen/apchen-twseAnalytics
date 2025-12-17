@@ -3,7 +3,6 @@ utils/stock_name_map.py
 -----------
 取得台灣證交所上市股票代碼與中文名稱、上市櫃類別碼對照
 """
-
 import os.path
 from utils.helpers import setup_logger
 import pandas as pd

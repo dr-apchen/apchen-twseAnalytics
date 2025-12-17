@@ -4,7 +4,6 @@ database/data_loder.py
 -----------
 股價資料寫入
 """
-
 from utils.helpers import setup_logger
 from database.db_connection import get_connection, close_connection
 from database.stock_info_manager import ensure_stock_exists
