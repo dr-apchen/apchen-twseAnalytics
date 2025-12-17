@@ -8,7 +8,6 @@ from utils.helpers import setup_logger
 import sys
 import subprocess
 from visualization.dashboard import ensure_data_completeness
-from database.db_connection import get_connection, close_connection
 from data_collector.scheduler import run_scheduler
 
 logger = setup_logger("main")
@@ -26,12 +25,11 @@ def main():
     cmd = sys.argv[1].lower() if len(sys.argv) > 1 else "dashboard"
 
     if cmd == "fetch":
-        conn = get_connection()
         stock_id = input("請輸入股票代號: ").strip()
         start_date = input("請輸入開始日期 (YYYY-MM-DD): ").strip()
         end_date = input("請輸入結束日期 (YYYY-MM-DD): ").strip()
-        ensure_data_completeness(conn, stock_id, start_date, end_date)
-        close_connection(conn)
+        ensure_data_completeness(stock_id, start_date, end_date)
+
     elif cmd == "dashboard":
         open_dashboard()
         

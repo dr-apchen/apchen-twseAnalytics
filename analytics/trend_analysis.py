@@ -6,6 +6,7 @@ analytics/trend_analysis.py
 2. 計算技術指標
 3. 可輸出 DataFrame 或圖表（未來擴充）
 """
+
 from utils.helpers import setup_logger
 import pandas as pd
 

@@ -8,6 +8,7 @@ scripts/generate_docs.py
 執行: python scripts/generate_docs.py --ignore-errors --open
 
 """
+
 import os
 import sys
 import subprocess
