@@ -72,6 +72,7 @@ twseAnalytics/
 ├── data/                                  # 本地資料
 │   ├── hot_stocks.csv                     ← 熱門股票清單
 │   ├── tw_stock_list.csv                  ← 台股股票清單
+│   ├── institutional_investor.csv         ← 三大法人買賣超清單
 │   └── logs/                              ← 執行紀錄或錯誤日誌
 │
 ├── tests/                                 # 單元測試
@@ -92,12 +93,77 @@ twseAnalytics/
 | 🚀<br/>系統主控 | main                                       | 啟動流程、自動更新、<br/>執行 Dashboard |
 
 ***
+### 開發計畫
+
+1. 產業分析擴充
+
+| 功能 | 價值評估 | 實作分析與視覺化 | 
+| -- | -- | -- | 
+| 產業平均漲跌幅 | 高價值。 這是判斷「今天哪個產業最熱/最冷」的核心指標，比單純的累積報酬率更具即時性。 | 1. 分析： 在 IndustryAnalyzer.aggregate_industry_performance 中，計算每日所有股票漲跌幅的平均值或加權平均值。 <br/>2. 視覺化： 繪製每日平均漲跌幅的長條圖 (Bar Chart)，正值用綠色，負值用紅色，易於辨識。 | 
+| 產業平均成交量 | 中高價值。 衡量市場對該產業的關注程度和流動性。成交量放大通常是趨勢確認的信號。 | 1. 分析： 計算每日所有股票成交量的總和。 <br/>2. 視覺化： 繪製每日總成交量趨勢圖，通常搭配累積報酬率圖使用，作為輔助判斷。 | 
+| 熱門產業 (產業漲跌幅排名) | 極高價值。 這是對上述數據的最終應用。使用者需要一個「市場儀表板」來快速查看哪個產業是當日焦點。 | 1. 分析： 新增一個 IndustryAnalyzer 或 RankingAnalyzer 函式，計算指定日期所有產業的平均漲跌幅，並按高到低排序。 <br/>2. 視覺化： 使用 表格或條形圖 呈現 Top 10 熱門（漲幅大）和 Bottom 10 冷門（跌幅大）產業。 | 
+
+2. 交易策略模組 (strategies/)
+
+預計更動結構:
+```
+twseAnalytics/
+│
+├── data_collector/                        # 資料蒐集層 (ETL)
+│   ├── yahoo_api.py                       ← yfinance 抓取原始股價
+│   ├── twse_crawler.py                    ← 爬取代碼、產業類別
+│   ├── data_updater.py                    ← 自動巡檢、補抓資料
+│   ├── scheduler.py                       ← 定時排程
+│   ├── hot_stock_fetcher.py               ← 爬取熱門股資料
+│   └── institutional_investor_fetcher.py  ← 爬取三大法人原始數據
+│
+├── database/                              # 資料儲存層 (MySQL)
+│   ├── db_config.py                       ← DB 連線字串設定
+│   ├── db_connection.py                   ← 連線建立
+│   ├── data_loader.py                     ← 讀寫 stock_price_daily (更名後)
+│   └── stock_info_manager.py              ← 讀寫股票資訊
+│
+├── analytics/                             # 分析運算層 (核心運算)
+│   ├── indicators.py                      ← 技術指標計算 (RSI, MACD, Bollinger, MA)
+│   ├── performance.py                     ← 【新增/重構】核心績效指標計算中心 (MDD, 年化報酬)
+│   ├── trend_analysis.py                  ← 自動趨勢解讀 (調用 performance.py)
+│   ├── industry_analysis.py               ← 產業排名與聚合 (Python/Pandas 計算)
+│   ├── investor_flow_analysis.py          ← 法人數據分析
+│   └── ranking_analyzer.py                ← 漲跌幅排名 (Python/Pandas 計算)
+│
+├── strategies/                            # 【新增】交易策略與回測層
+│   ├── technical_strategies.py            ← 具體策略規則 (調用 indicators.py)
+│   ├── backtester.py                      ← 回測執行引擎
+│   └── evaluator.py                       ← 策略績效評估 (調用 performance.py)
+│
+├── visualization/                         # 視覺化展示層
+│   ├── dashboard.py                       ← Streamlit 頁面控管與路徑
+│   ├── chart_utils.py                     ← 通用繪圖工具 (K線、產業圖)
+│   ├── strategy_plots.py                  ← 【新增】回測專用圖表 (淨值曲線、回撤圖)
+│   └── summary_table.py                   ← 格式化表格 (支援中文對照與數值格式)
+│
+├── utils/                                 # 工具輔助層
+│   ├── stock_info_map.py                  ← 股票資訊對照
+│   └── helpers.py                         ← 日期處理、通用格式化
+│
+├── data/                                  # 本地暫存與日誌
+│   ├── hot_stocks.csv
+│   ├── tw_stock_list.csv
+│   └── logs/
+│
+├── tests/                                 # 測試模組
+│   ├── test_data_loader.py                ← 測試資料庫連線
+│   └── test_performance.py                ← 測試報酬率與回撤計算準確性
+│
+└── main.py                                # 系統啟動入口
+```
+***
 ### 簡報介紹
 
-Beta 1.0
+Beta 1.0<br/>
 <a href="https://reurl.cc/xKEkm5" target="_blank">
 <img width="250" height="250" alt="qrcode" src="https://github.com/user-attachments/assets/2c04e7ca-ab46-4be4-b7ec-14dd5b9cbdf6" />
 </a>
 <br/><br/>
-Beta 1.1
+Beta 1.1<br/>
 <br/>
