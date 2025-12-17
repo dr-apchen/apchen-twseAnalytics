@@ -616,7 +616,6 @@ def render_investor_flow_page():
     else:
         st.info("無法載入所選 Top N 股票的歷史趨勢數據。")
         
-    close_connection(conn)
     # C. 額外增加單一股票累積買超趨勢 (選用，使用者點擊排行榜後展示)
     st.markdown("---")
     st.subheader("📊 單一股票外資累積淨買入趨勢分析")
@@ -637,7 +636,6 @@ def render_investor_flow_page():
         # 這裡需要與趨勢圖相同的時間區間，或更長的區間 (例如：一年)
         analysis_end_date = target_date_str
         analysis_start_date = (target_date - timedelta(days=365)).strftime("%Y-%m-%d") 
-        conn = get_connection()
         with st.spinner(f"正在載入 {selected_stock} 的歷史外資交易數據..."):
             
             # 從 data_loader 載入單一股票的歷史數據
@@ -650,7 +648,7 @@ def render_investor_flow_page():
                 analysis_end_date
             )
         
-        conn.close()
+        close_connection(conn)
         # 3. 繪製累積趨勢圖
         if not stock_net_buy_df.empty:
             # 獲取 Series (只有 foreign_net_shares 欄位)
@@ -846,7 +844,7 @@ def render_ranking_overview_page():
         else:
             st.warning(f"找不到所選條件下的 {metric_display} 數據。")
 
-    conn.close()
+    close_connection(conn)
     # 頁面結束
     st.success("市場總覽排行榜數據已載入完成。")    
     
