@@ -3,7 +3,6 @@ database/db_connection.py
 -----------
 建立 MySQL 連線物件
 """
-
 from utils.helpers import setup_logger
 import mysql.connector
 from mysql.connector import Error
