@@ -55,9 +55,9 @@ twseAnalytics/
 │   └── stock_info_manager.py              ← 讀寫股票名稱、產業類別
 │
 ├── analytics/                             # 分析層：技術指標與分析邏輯
-│   ├── indicators.py                      ← RSI, MACD, Bollinger, MA, Volume
+│   ├── indicators.py                      ← 個股指標 (RSI, MACD, Bollinger, MA, Volume)
 │   ├── trend_analysis.py                  ← 自動趨勢解讀（多頭/空頭訊號）
-│   ├── portfolio_stats.py                 ← 多股票統計與報酬分析
+│   ├── portfolio_stats.py                 ← 多股票統計與報酬率、風險分析
 │   ├── industry_analysis.py               ← 產業資料分析與排名
 │   ├── investor_flow_analysis.py          ← 三大法人投資數據分析與排名
 │   └── ranking_analyzer.py                ← 產業與個股漲跌幅排名
