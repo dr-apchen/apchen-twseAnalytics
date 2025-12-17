@@ -145,7 +145,7 @@ visualization<wbr>.dashboard    </h1>
 </span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>    <span class="n">df</span> <span class="o">=</span> <span class="n">load_stock_data</span><span class="p">(</span><span class="n">stock_id</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">)</span>
 </span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>    
 </span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>    <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>        <span class="n">st</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;❌ 抓取 </span><span class="si">{</span><span class="n">stock_id</span><span class="si">}</span><span class="s2"> 資料失敗，請檢查股票代碼或網路連線&quot;</span><span class="p">)</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>        <span class="n">st</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;❌ 抓取 </span><span class="si">{stock_id}</span><span class="s2"> 資料失敗，請檢查股票代碼或網路連線&quot;</span><span class="p">)</span>
 </span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>        
 </span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>    <span class="c1"># Step 3: 偵測資料庫缺口</span>
 </span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>    <span class="k">else</span><span class="p">:</span>
@@ -264,7 +264,7 @@ visualization<wbr>.dashboard    </h1>
 </span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a>                        
 </span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a>            
 </span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a>    <span class="n">st</span><span class="o">.</span><span class="n">sidebar</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="s2">&quot;---&quot;</span><span class="p">)</span>
-</span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a>    <span class="n">st</span><span class="o">.</span><span class="n">sidebar</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="s2">&quot;**版本**： Beta 1.0&quot;</span><span class="p">)</span>
+</span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a>    <span class="n">st</span><span class="o">.</span><span class="n">sidebar</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="s2">&quot;**版本**：Beta 1.0&quot;</span><span class="p">)</span>
 </span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a>            
 </span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a><span class="k">def</span><span class="w"> </span><span class="nf">generate_charts</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">stock_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 </span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -456,7 +456,7 @@ visualization<wbr>.dashboard    </h1>
 </span><span id="ensure_data_completeness-61"><a href="#ensure_data_completeness-61"><span class="linenos">61</span></a>    <span class="n">df</span> <span class="o">=</span> <span class="n">load_stock_data</span><span class="p">(</span><span class="n">stock_id</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">)</span>
 </span><span id="ensure_data_completeness-62"><a href="#ensure_data_completeness-62"><span class="linenos">62</span></a>    
 </span><span id="ensure_data_completeness-63"><a href="#ensure_data_completeness-63"><span class="linenos">63</span></a>    <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-</span><span id="ensure_data_completeness-64"><a href="#ensure_data_completeness-64"><span class="linenos">64</span></a>        <span class="n">st</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;❌ 抓取 </span><span class="si">{</span><span class="n">stock_id</span><span class="si">}</span><span class="s2"> 資料失敗，請檢查股票代碼或網路連線&quot;</span><span class="p">)</span>
+</span><span id="ensure_data_completeness-64"><a href="#ensure_data_completeness-64"><span class="linenos">64</span></a>        <span class="n">st</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;❌ 抓取 </span><span class="si">{stock_id}</span><span class="s2"> 資料失敗，請檢查股票代碼或網路連線&quot;</span><span class="p">)</span>
 </span><span id="ensure_data_completeness-65"><a href="#ensure_data_completeness-65"><span class="linenos">65</span></a>        
 </span><span id="ensure_data_completeness-66"><a href="#ensure_data_completeness-66"><span class="linenos">66</span></a>    <span class="c1"># Step 3: 偵測資料庫缺口</span>
 </span><span id="ensure_data_completeness-67"><a href="#ensure_data_completeness-67"><span class="linenos">67</span></a>    <span class="k">else</span><span class="p">:</span>
@@ -601,7 +601,7 @@ visualization<wbr>.dashboard    </h1>
 </span><span id="run_dashboard-180"><a href="#run_dashboard-180"><span class="linenos">180</span></a>                        
 </span><span id="run_dashboard-181"><a href="#run_dashboard-181"><span class="linenos">181</span></a>            
 </span><span id="run_dashboard-182"><a href="#run_dashboard-182"><span class="linenos">182</span></a>    <span class="n">st</span><span class="o">.</span><span class="n">sidebar</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="s2">&quot;---&quot;</span><span class="p">)</span>
-</span><span id="run_dashboard-183"><a href="#run_dashboard-183"><span class="linenos">183</span></a>    <span class="n">st</span><span class="o">.</span><span class="n">sidebar</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="s2">&quot;**版本**： Beta 1.0&quot;</span><span class="p">)</span>
+</span><span id="run_dashboard-183"><a href="#run_dashboard-183"><span class="linenos">183</span></a>    <span class="n">st</span><span class="o">.</span><span class="n">sidebar</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="s2">&quot;**版本**：Beta 1.0&quot;</span><span class="p">)</span>
 </span></pre></div>
 
 
