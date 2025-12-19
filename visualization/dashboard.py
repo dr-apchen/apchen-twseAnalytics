@@ -234,8 +234,8 @@ def run_dashboard():
         # --- 1. 使用者輸入選單 ---
         # 假設 get_all_industry_names() 從 DB 讀取所有產業名稱
         all_industries = get_all_industry()
-        if "nan" in all_industries:
-            all_industries.remove("nan")
+        if "未知" in all_industries:
+            all_industries.remove("未知")
         if len(all_industries) < 1:
             st.error("❌ 無法取得產業別清單，請重新開啟頁面以確保台股產業資料已下載。")
         else:
