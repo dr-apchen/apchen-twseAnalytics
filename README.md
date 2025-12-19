@@ -91,7 +91,15 @@ twseAnalytics/
 
 ***
 ### 簡報介紹
-<br/>
+
+Beta 1.0<br/>
 <a href="https://reurl.cc/xKEkm5" target="_blank">
 <img width="250" height="250" alt="qrcode" src="https://github.com/user-attachments/assets/2c04e7ca-ab46-4be4-b7ec-14dd5b9cbdf6" />
 </a>
+<br/><br/>
+Beta 1.1<br/>
+<a href="https://www.canva.com/design/DAG7K31aFJk/JXvx62JjBsSnUDTYXNkf9A/view?utm_content=DAG7K31aFJk&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h22da4afd3c" target="_blank">
+<img width="250" height="250" alt="qrcode-canva-1 1" src="https://github.com/user-attachments/assets/00f0441a-7f76-40f5-b883-4dea16da09f1" />
+</a>
+<br/>
+
