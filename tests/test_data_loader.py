@@ -3,6 +3,7 @@ test_data_loader.py
 -------------------
 基礎資料庫測試：確認 MySQL 連線成功。
 """
+
 import unittest
 from database.db_connection import get_connection
 
