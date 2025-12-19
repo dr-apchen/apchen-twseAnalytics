@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS stock_info (
     stock_id VARCHAR(10) PRIMARY KEY,
     stock_name VARCHAR(50),
     sector VARCHAR(50),
-    industry VARCHAR(50) DEFAULT '其他',
+    industry VARCHAR(50) DEFAULT '未知',
     market_type VARCHAR(20),
     listing_date DATE
 );
